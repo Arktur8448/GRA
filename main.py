@@ -32,4 +32,6 @@ def on_draw():  # Podstawowe Rysowanie Mapy
     batch.draw()
 
 
+# window.view = window.view.translate((800, 0,0))
+# do ruchu kamery potrzebuje ⬆️
 pyglet.app.run()
