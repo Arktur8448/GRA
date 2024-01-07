@@ -1,7 +1,4 @@
-# tu daj szarwiła
-from pyglet import shapes
-
-
+# tu daj szarwiła tą klase
 class Player:
     def __init__(self, x=0, y=0):
         self.playerSprite = None
@@ -13,5 +10,3 @@ class Player:
         self.playerSprite.y = self.y
 
 
-def center_camera_to_player(window, player):
-    window.view = window.view.translate((player.x, player.y))

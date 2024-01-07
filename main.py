@@ -1,7 +1,6 @@
 import pyglet
 from pyglet import shapes
 from pyglet.window import key
-from pyglet import clock
 import player
 
 x_window = 960  # wymiary x okna
@@ -38,6 +37,7 @@ def on_draw():  # Podstawowe Rysowanie Mapy
     batch.draw()
     playerObject.playerSprite.draw()
 
+
 @window.event
 def on_key_press(symbol, modifiers):
     global w, a, s, d
@@ -49,6 +49,7 @@ def on_key_press(symbol, modifiers):
         s = True
     elif symbol == key.D:
         d = True
+
 
 @window.event
 def on_key_release(symbol, modifiers):
@@ -62,20 +63,24 @@ def on_key_release(symbol, modifiers):
     elif symbol == key.D:
         d = False
 
+
 def update(dt):
-    print(playerObject.x,playerObject.y)
     if w:
         playerObject.y += playerObject.velocity_y * dt
-        playerObject.playerSprite.y += playerObject.velocity_y * dt
+        playerObject.update_sprite()
+        window.view = window.view.translate((0,-playerObject.velocity_y * dt, 0))
     if s:
         playerObject.y -= playerObject.velocity_y * dt
-        playerObject.playerSprite.y -= playerObject.velocity_y * dt
+        playerObject.update_sprite()
+        window.view = window.view.translate((0,playerObject.velocity_y * dt, 0))
     if a:
         playerObject.x -= playerObject.velocity_x * dt
-        playerObject.playerSprite.x -= playerObject.velocity_x * dt
+        playerObject.update_sprite()
+        window.view = window.view.translate((playerObject.velocity_x * dt, 0, 0))
     if d:
         playerObject.x += playerObject.velocity_x * dt
-        playerObject.playerSprite.x += playerObject.velocity_x * dt
+        playerObject.update_sprite()
+        window.view = window.view.translate((-playerObject.velocity_x * dt, 0 , 0))
 
 
 pyglet.clock.schedule_interval(update, dt)
