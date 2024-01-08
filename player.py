@@ -1,5 +1,4 @@
-# tu daj szarwiła tą klase
-# okokokokokokokokokokok
+import  items # import pliku items.py
 class Player:
     def __init__(self, x=0, y=0):
         self.playerSprite = None
