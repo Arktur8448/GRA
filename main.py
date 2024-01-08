@@ -4,22 +4,38 @@ from pyglet.window import key
 import player
 
 x_window = 960  # wymiary x okna
-y_window = 540 # wymiary y okna
+y_window = 540  # wymiary y okna
 window = pyglet.window.Window(x_window, y_window, fullscreen=False)
 batch = pyglet.graphics.Batch()  # do wyświetlania krztałtów
 
 objects = []
 tab = [
-    [1, 0, 0, 1],
-    [1, 0, 0, 1],
-    [1, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
 tab.reverse()  # inczej wysztko jest do góry nogami
 
-dt = 1/60
-playerObject = player.Player(x_window/2,y_window/2)
-playerObject.playerSprite = shapes.Circle(x_window / 2, y_window / 2, 50, color=(168, 80, 100), batch=batch)
+dt = 1 / 60
+playerObject = player.Player(x_window / 2, y_window / 2)
+playerObject.playerSprite = shapes.Circle(x_window / 2, y_window / 2, 25, color=(168, 80, 100), batch=batch)
 w, a, s, d = False, False, False, False
+
 
 @window.event
 def on_draw():  # Podstawowe Rysowanie Mapy
@@ -68,11 +84,11 @@ def update(dt):
     if w:
         playerObject.y += playerObject.velocity_y * dt
         playerObject.update_sprite()
-        window.view = window.view.translate((0,-playerObject.velocity_y * dt, 0))
+        window.view = window.view.translate((0, -playerObject.velocity_y * dt, 0))
     if s:
         playerObject.y -= playerObject.velocity_y * dt
         playerObject.update_sprite()
-        window.view = window.view.translate((0,playerObject.velocity_y * dt, 0))
+        window.view = window.view.translate((0, playerObject.velocity_y * dt, 0))
     if a:
         playerObject.x -= playerObject.velocity_x * dt
         playerObject.update_sprite()
@@ -80,9 +96,8 @@ def update(dt):
     if d:
         playerObject.x += playerObject.velocity_x * dt
         playerObject.update_sprite()
-        window.view = window.view.translate((-playerObject.velocity_x * dt, 0 , 0))
+        window.view = window.view.translate((-playerObject.velocity_x * dt, 0, 0))
 
 
 pyglet.clock.schedule_interval(update, dt)
 pyglet.app.run()
-
