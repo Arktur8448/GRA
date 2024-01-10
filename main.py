@@ -1,6 +1,7 @@
 import pyglet
 from pyglet import shapes
 from pyglet.window import key
+from pyglet.gl import *
 import player
 
 x_window = 960  # wymiary x okna
@@ -33,7 +34,7 @@ tab.reverse()  # inczej wysztko jest do góry nogami
 
 dt = 1 / 60
 playerObject = player.Player(x_window / 2, y_window / 2)
-playerObject.playerSprite = shapes.Circle(x_window / 2, y_window / 2, 25, color=(168, 80, 100), batch=batch)
+playerObject.playerSprite = shapes.Circle(x_window / 2, y_window / 2, 15, color=(168, 80, 100), batch=batch)
 w, a, s, d = False, False, False, False
 
 
@@ -43,14 +44,25 @@ def on_draw():  # Podstawowe Rysowanie Mapy
     for r in range(len(tab)):  # r to ROW
         for i in range(len(tab[r])):  # i to ITEM
             if tab[r][i] == 1:
-                objects.append(shapes.Rectangle(x=x_window / len(tab[r]) * i, y=y_window / len(tab) * r,
-                                                width=x_window / len(tab[r]), height=y_window / len(tab),
+                objects.append(shapes.Rectangle(x=64 * i, y=64 * r,
+                                                width=64, height=64,
                                                 color=(111, 169, 117), batch=batch))
             elif tab[r][i] == 0:
-                objects.append(shapes.Rectangle(x=x_window / len(tab[r]) * i, y=y_window / len(tab) * r,
-                                                width=x_window / len(tab[r]), height=y_window / len(tab),
+                objects.append(shapes.Rectangle(x=64 * i, y=64 * r,
+                                                width=64, height=64,
                                                 color=(168, 160, 46), batch=batch))
     batch.draw()
+    # img = pyglet.image.load('Map.png')
+    # map = pyglet.sprite.Sprite(img=img)
+    # map.width *= 2
+    # map.height *= 2
+    # map.draw()
+    image = pyglet.image.load('Map.png')
+    texture = image.get_texture()
+    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+    texture.width *= 2
+    texture.height *= 2
+    texture.blit(0, 0)
     playerObject.playerSprite.draw()
 
 
