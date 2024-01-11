@@ -4,7 +4,9 @@ class Player:
         self.playerSprite = None
         self.x = x
         self.y = y
-        self.velocity_x, self.velocity_y = 100.0, 100.0
+        self.velocity_x, self.velocity_y = 80.0, 80.0
+        self.keys = {} # przechowuje aktulanie naciśnięte klawicze
+
         self.level = 1  # base staty
         self.exp = 0
         self.attribute_points = 0
