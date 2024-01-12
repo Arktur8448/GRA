@@ -2,6 +2,7 @@ from items import Item
 
 
 class Weapon(Item):
+    ''' do robienia itemków (tortury mirosa 1.2) '''
     def __init__(self, typee, name, consumable, stackable, strength_requirement, agility_requirement, damage, speed):
         super().__init__(typee, name, consumable, stackable)
         self.strength_requirement = strength_requirement
