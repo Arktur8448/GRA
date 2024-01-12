@@ -1,5 +1,9 @@
-class Items:
-    def __init__(self, typee, consumable, stackable):
-        self.type = typee
+class Item:
+    def __init__(self, typee, name, consumable, stackable):
+        self.typee = typee
+        self.name = name
         self.consumable = consumable
         self.stackable = stackable
+
+    def kill(self):
+        print(self.typee)
