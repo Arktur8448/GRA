@@ -6,3 +6,4 @@ class Race:
         self.strength = strength
         self.defence = defence
         self.agility = agility
+
