@@ -45,6 +45,11 @@ items = [
     Item("sword", "Sword of The Witcher", False, False),
     Item("sword", "Sword of The Grandfather", False, False),
     Item("sword", "Sword of The Zombie", False, False),
-    Item("sword", "Sword of The ", False, False),
+    Item("sword", "Sword of The Lord Kris", False, False),
+    Item("axe", "Axe of The Viking", False, False),
+    Item("axe", "Axe of The Celt", False, False),
+    Item("axe", "Axe of The Roman", False, False),
+    Item("lance", "Hussar Lance", False, False),
+
 
 ]
