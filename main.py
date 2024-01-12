@@ -3,6 +3,8 @@ from pyglet import shapes
 from pyglet.window import key
 from pyglet.gl import *
 import player
+import arcade
+
 
 x_window = 960  # wymiary x okna
 y_window = 540  # wymiary y okna
