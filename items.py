@@ -4,3 +4,9 @@ class Item:
         self.name = name
         self.consumable = consumable
         self.stackable = stackable
+
+
+items = [
+    Item("heal", "Potka",True,True),
+    Item("heal", "Potka",True,True),
+]
