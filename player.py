@@ -1,10 +1,10 @@
+import  arcade
 class Player:
-    def __init__(self, x=0, y=0):
-        self.playerSprite = None
+    def __init__(self, x=0, y=0 , sprite=None):
+        self.playerSprite = sprite
+        self.movment_speed = 10
         self.x = x
         self.y = y
-        self.velocity_x, self.velocity_y = 80.0, 80.0
-        self.keys = {} # przechowuje aktulanie naciśnięte klawicze
 
         self.level = 1  # base staty
         self.exp = 0
@@ -18,8 +18,8 @@ class Player:
         self.weapon = None
 
     def update_sprite(self):
-        self.playerSprite.x = self.x
-        self.playerSprite.y = self.y
+        self.playerSprite.center_x = self.x
+        self.playerSprite.center_y = self.y
 
     def is_alive(self):
         if self.health > 0:

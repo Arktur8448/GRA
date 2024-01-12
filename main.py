@@ -1,97 +1,95 @@
-import pyglet
-from pyglet import shapes
-from pyglet.window import key
-from pyglet.gl import *
-import player
+import arcade
+import player as pl
 
-x_window = 960  # wymiary x okna
-y_window = 540  # wymiary y okna
-window = pyglet.window.Window(x_window, y_window, fullscreen=False)
-batch = pyglet.graphics.Batch()  # do wyświetlania krztałtów
-
-objects = []
-tab = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-]
-tab.reverse()  # inczej wysztko jest do góry nogami
-
-dt = 1 / 60
-playerObject = player.Player(x_window / 2, y_window / 2)
-playerObject.playerSprite = shapes.Circle(x_window / 2, y_window / 2, 15, color=(168, 80, 100), batch=batch)
+SCREEN_WIDTH = 960
+SCREEN_HEIGHT = 540
+SCREEN_TITLE = "GAME"
 
 
-@window.event
-def on_draw():  # Podstawowe Rysowanie Mapy
-    window.clear()
-    for r in range(len(tab)):  # r to ROW
-        for i in range(len(tab[r])):  # i to ITEM
-            if tab[r][i] == 1:
-                objects.append(shapes.Rectangle(x=64 * i, y=64 * r,
-                                                width=64, height=64,
-                                                color=(111, 169, 117), batch=batch))
-            elif tab[r][i] == 0:
-                objects.append(shapes.Rectangle(x=64 * i, y=64 * r,
-                                                width=64, height=64,
-                                                color=(168, 160, 46), batch=batch))
-    batch.draw() # rysowanie kwadratów kolizji
+class Game(arcade.Window):
 
-    image = pyglet.image.load('Map.png') # wycztanie mapy jako tekstury opengl
-    texture = image.get_texture()
-    gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
-    texture.width *= 2
-    texture.height *= 2
-    texture.blit(0, 0)
+    def __init__(self, width, height, title):
+        super().__init__(width, height, title)
 
-    playerObject.playerSprite.draw()
+        arcade.set_background_color(arcade.color.AMAZON)
 
-# sprawdzanie wciśnięcia klawiszy
-@window.event
-def on_key_release(symbol, modifiers):
-    del playerObject.keys[symbol]
+        # If you have sprite lists, you should create them here,
+        # and set them to None
+
+        # Variables that will hold sprite lists
+        self.sprite_list = None
+
+    def setup(self):
+        """ Set up the game variables. Call to re-start the game. """
+        # Create your sprites and sprite lists here
+        # Sprite lists
+        self.sprite_list = arcade.SpriteList()
+
+        # Set up the player
+
+    def on_draw(self):
+        """
+        Render the screen.
+        """
+
+        # This command should happen before we start drawing. It will clear
+        # the screen to the background color, and erase what we drew last frame.
+        self.clear()
+
+        # Call draw() on all your sprite lists below
+        self.sprite_list.draw()
+
+    def on_update(self, delta_time):
+        """
+        All the logic to move, and the game logic goes here.
+        Normally, you'll call update() on the sprite lists that
+        need it.
+        """
+        pass
+
+    def on_key_press(self, key, key_modifiers):
+        """
+        Called whenever a key on the keyboard is pressed.
+
+        For a full list of keys, see:
+        https://api.arcade.academy/en/latest/arcade.key.html
+        """
+        pass
+
+    def on_key_release(self, key, key_modifiers):
+        """
+        Called whenever the user lets off a previously pressed key.
+        """
+        pass
+
+    def on_mouse_motion(self, x, y, delta_x, delta_y):
+        """
+        Called whenever the mouse moves.
+        """
+        pass
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        """
+        Called when the user presses a mouse button.
+        """
+        pass
+
+    def on_mouse_release(self, x, y, button, key_modifiers):
+        """
+        Called when a user releases a mouse button.
+        """
+        pass
 
 
-@window.event
-def on_key_press( symbol, modifiers):
-    playerObject.keys[symbol] = True
+def main():
+    """ Main function """
+    game = Game(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    player = pl.Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.Sprite("Player.png"))
+    player.update_sprite()
+    game.setup()
+    game.sprite_list.append(player.playerSprite)
+    arcade.run()
 
 
-def move(dt):
-    # x 300
-    # y 600
-    if key.W in playerObject.keys:
-        playerObject.y += playerObject.velocity_y * dt
-        playerObject.update_sprite()
-        window.view = window.view.translate((0, -playerObject.velocity_y * dt, 0))
-    if key.S in playerObject.keys:
-        playerObject.y -= playerObject.velocity_y * dt
-        playerObject.update_sprite()
-        window.view = window.view.translate((0, playerObject.velocity_y * dt, 0))
-    if key.A in playerObject.keys:
-        playerObject.x -= playerObject.velocity_x * dt
-        playerObject.update_sprite()
-        window.view = window.view.translate((playerObject.velocity_x * dt, 0, 0))
-    if key.D in playerObject.keys:
-        playerObject.x += playerObject.velocity_x * dt
-        playerObject.update_sprite()
-        window.view = window.view.translate((-playerObject.velocity_x * dt, 0, 0))
-
-
-pyglet.clock.schedule_interval(move, dt)
-pyglet.app.run()
+if __name__ == "__main__":
+    main()
