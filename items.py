@@ -4,6 +4,3 @@ class Item:
         self.name = name
         self.consumable = consumable
         self.stackable = stackable
-
-    def kill(self):
-        print(self.typee)
