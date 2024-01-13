@@ -7,7 +7,6 @@ SCREEN_HEIGHT = 540
 SCREEN_TITLE = "GAME"
 CAMERA_SPEED = 0.05 # szybokość z jaką kamera nadąża za graczem od 0 do 1
 
-
 class Game(arcade.Window):
 
     def __init__(self, width, height, title):
@@ -24,6 +23,8 @@ class Game(arcade.Window):
 
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
+        self.dodge_cooldown = 0
+
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
         self.scene = arcade.Scene()
@@ -32,6 +33,7 @@ class Game(arcade.Window):
 
         self.playerObject = pl.Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.Sprite("Player.png"))  # tworzenie obietu gracza
         self.playerObject.update_pos()
+        self.dodge_cooldown = self.playerObject.dodge_cooldown
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
         self.scene.add_sprite("Walls", arcade.Sprite("Wall.png", center_x=SCREEN_WIDTH/2, center_y=SCREEN_HEIGHT/2 + 128))
@@ -60,7 +62,8 @@ class Game(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-
+        if self.dodge_cooldown < self.playerObject.dodge_cooldown:
+            self.dodge_cooldown += 1/60
         self.movement()
 
     def on_key_press(self, key, key_modifiers):
@@ -75,40 +78,39 @@ class Game(arcade.Window):
         """
         del self.playerObject.keys[key]
 
-    def on_mouse_motion(self, x, y, delta_x, delta_y):
-        """
-        Called whenever the mouse moves.
-        """
-        pass
-
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        """
-        Called when the user presses a mouse button.
-        """
-        pass
-
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Called when a user releases a mouse button.
-        """
-        pass
-
     # Własne funkcje
     def movement(self):
         def check_move_key():  # aktualizacja pozycji w zależności od naciśniętych klawiszy
             if arcade.key.W in self.playerObject.keys:
                 self.playerObject.playerSprite.change_y = self.playerObject.movement_speed
+                self.playerObject.direction_move = "Up"
             elif arcade.key.S in self.playerObject.keys:
                 self.playerObject.playerSprite.change_y = -self.playerObject.movement_speed
+                self.playerObject.direction_move = "Down"
             else:
                 self.playerObject.playerSprite.change_y = 0
 
             if arcade.key.A in self.playerObject.keys:
                 self.playerObject.playerSprite.change_x = -self.playerObject.movement_speed
+                if arcade.key.W in self.playerObject.keys:
+                    self.playerObject.direction_move = "UpLeft"
+                elif arcade.key.S in self.playerObject.keys:
+                    self.playerObject.direction_move = "DownLeft"
+                else:
+                    self.playerObject.direction_move = "Left"
             elif arcade.key.D in self.playerObject.keys:
                 self.playerObject.playerSprite.change_x = self.playerObject.movement_speed
+                if arcade.key.W in self.playerObject.keys:
+                    self.playerObject.direction_move = "UpRight"
+                elif arcade.key.S in self.playerObject.keys:
+                    self.playerObject.direction_move = "DownRight"
+                else:
+                    self.playerObject.direction_move = "Right"
             else:
                 self.playerObject.playerSprite.change_x = 0
+
+            if arcade.key.SPACE in self.playerObject.keys:
+                dodge()
 
         def move_camera_to_player():
             position = Vec2(
@@ -116,6 +118,37 @@ class Game(arcade.Window):
                 self.playerObject.playerSprite.center_y - self.height / 2
             )
             self.camera.move_to(position, CAMERA_SPEED)
+
+        def dodge():
+            if self.dodge_cooldown < self.playerObject.dodge_cooldown:
+                return
+            else:
+                self.dodge_cooldown = 0
+            if self.playerObject.direction_move == "Left":
+                self.playerObject.playerSprite.change_x = -self.playerObject.movement_speed * self.playerObject.dodge_distance
+            elif self.playerObject.direction_move == "UpLeft":
+                self.playerObject.playerSprite.change_y = self.playerObject.movement_speed * self.playerObject.dodge_distance
+                self.playerObject.playerSprite.change_x = -self.playerObject.movement_speed * self.playerObject.dodge_distance
+            elif self.playerObject.direction_move == "Up":
+                self.playerObject.playerSprite.change_y = self.playerObject.movement_speed * self.playerObject.dodge_distance
+
+            elif self.playerObject.direction_move == "UpRight":
+                self.playerObject.playerSprite.change_y = self.playerObject.movement_speed * self.playerObject.dodge_distance
+                self.playerObject.playerSprite.change_x = self.playerObject.movement_speed * self.playerObject.dodge_distance
+
+            elif self.playerObject.direction_move == "Right":
+                self.playerObject.playerSprite.change_x = self.playerObject.movement_speed * self.playerObject.dodge_distance
+
+            elif self.playerObject.direction_move == "DownRight":
+                self.playerObject.playerSprite.change_y = -self.playerObject.movement_speed * self.playerObject.dodge_distance
+                self.playerObject.playerSprite.change_x = self.playerObject.movement_speed * self.playerObject.dodge_distance
+
+            elif self.playerObject.direction_move == "Down":
+                self.playerObject.playerSprite.change_y = -self.playerObject.movement_speed * self.playerObject.dodge_distance
+                
+            elif self.playerObject.direction_move == "DownLeft":
+                self.playerObject.playerSprite.change_y = -self.playerObject.movement_speed * self.playerObject.dodge_distance
+                self.playerObject.playerSprite.change_x = -self.playerObject.movement_speed * self.playerObject.dodge_distance
 
         check_move_key()
         self.physics_engine.update()

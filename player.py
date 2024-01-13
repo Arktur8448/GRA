@@ -5,11 +5,14 @@ class Player:
     def __init__(self, x=0, y=0, sprite=None):
         self.playerSprite = sprite
         self.movement_speed = 2
+        self.dodge_distance = 30
+        self.dodge_cooldown = 3
         self.x = x
         self.y = y
         self.playerSprite.center_x = self.x
         self.playerSprite.center_y = self.y
         self.keys = {}
+        self.direction_move = "Down"
 
         self.level = 1  # base staty
         self.exp = 0
