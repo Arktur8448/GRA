@@ -14,7 +14,7 @@ class Game(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
 
-        arcade.set_background_color(arcade.color.AMAZON)
+        arcade.set_background_color((231,255,80))
 
         self.playerObject = None
 
@@ -34,7 +34,7 @@ class Game(arcade.Window):
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite_list("Player")
 
-        self.playerObject = pl.Player(735, 865, arcade.Sprite("Player.png"))  # tworzenie obietu gracza
+        self.playerObject = pl.Player(735, 865, arcade.Sprite("Player.png",0.75))  # tworzenie obietu gracza
 
         self.playerObject.update_pos()
         self.dodge_cooldown = self.playerObject.dodge_cooldown
