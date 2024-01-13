@@ -1,10 +1,15 @@
-import  arcade
+import arcade
+
+
 class Player:
-    def __init__(self, x=0, y=0 , sprite=None):
+    def __init__(self, x=0, y=0, sprite=None):
         self.playerSprite = sprite
-        self.movment_speed = 10
+        self.movement_speed = 2
         self.x = x
         self.y = y
+        self.playerSprite.center_x = self.x
+        self.playerSprite.center_y = self.y
+        self.keys = {}
 
         self.level = 1  # base staty
         self.exp = 0
@@ -17,9 +22,10 @@ class Player:
         self.race = None
         self.weapon = None
 
-    def update_sprite(self):
-        self.playerSprite.center_x = self.x
-        self.playerSprite.center_y = self.y
+    def update_pos(self):
+        """Update Pozycji Gracza"""
+        self.x = self.playerSprite.center_x
+        self.y = self.playerSprite.center_y
 
     def is_alive(self):
         if self.health > 0:
