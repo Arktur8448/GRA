@@ -30,9 +30,9 @@ class Game(arcade.Window):
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
-        self.scene = arcade.Scene()
+        self.tile_map = arcade.load_tilemap("village2.json", 2)
+        self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite_list("Player")
-        self.scene.add_sprite_list("Walls")
 
         self.playerObject = pl.Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.Sprite("Player.png"))  # tworzenie obietu gracza
         self.playerObject.update_pos()
