@@ -1,11 +1,13 @@
 import arcade
 import player as pl
 from pyglet.math import Vec2
+import time
 
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 540
 SCREEN_TITLE = "GAME"
 CAMERA_SPEED = 0.05 # szybokość z jaką kamera nadąża za graczem od 0 do 1
+
 
 class Game(arcade.Window):
 
@@ -24,6 +26,7 @@ class Game(arcade.Window):
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         self.dodge_cooldown = 0
+        self.doge_last_time = 0
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -34,6 +37,7 @@ class Game(arcade.Window):
         self.playerObject = pl.Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.Sprite("Player.png"))  # tworzenie obietu gracza
         self.playerObject.update_pos()
         self.dodge_cooldown = self.playerObject.dodge_cooldown
+        self.doge_last_time = time.perf_counter() - self.playerObject.dodge_cooldown sss
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
         self.scene.add_sprite("Walls", arcade.Sprite("Wall.png", center_x=SCREEN_WIDTH/2, center_y=SCREEN_HEIGHT/2 + 128))
@@ -62,8 +66,6 @@ class Game(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        if self.dodge_cooldown < self.playerObject.dodge_cooldown:
-            self.dodge_cooldown += 1/60
         self.movement()
 
     def on_key_press(self, key, key_modifiers):
@@ -110,7 +112,8 @@ class Game(arcade.Window):
                 self.playerObject.playerSprite.change_x = 0
 
             if arcade.key.SPACE in self.playerObject.keys:
-                dodge()
+                if time.perf_counter() - self.doge_last_time > self.playerObject.dodge_cooldown:
+                    dodge()
 
         def move_camera_to_player():
             position = Vec2(
@@ -120,10 +123,7 @@ class Game(arcade.Window):
             self.camera.move_to(position, CAMERA_SPEED)
 
         def dodge():
-            if self.dodge_cooldown < self.playerObject.dodge_cooldown:
-                return
-            else:
-                self.dodge_cooldown = 0
+            self.doge_last_time = time.perf_counter()
             if self.playerObject.direction_move == "Left":
                 self.playerObject.playerSprite.change_x = -self.playerObject.movement_speed * self.playerObject.dodge_distance
             elif self.playerObject.direction_move == "UpLeft":
