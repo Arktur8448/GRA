@@ -461,7 +461,7 @@
          "name":"collision",
          "opacity":0,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":23,
          "x":0,
          "y":0

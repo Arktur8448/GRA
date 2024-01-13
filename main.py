@@ -30,21 +30,20 @@ class Game(arcade.Window):
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
-        self.tile_map = arcade.load_tilemap("village2.json", 2)
+        self.tile_map = arcade.load_tilemap("Maps/village/village.json", 2)
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite_list("Player")
 
-        self.playerObject = pl.Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.Sprite("Player.png"))  # tworzenie obietu gracza
+        self.playerObject = pl.Player(735, 865, arcade.Sprite("Player.png"))  # tworzenie obietu gracza
+
         self.playerObject.update_pos()
         self.dodge_cooldown = self.playerObject.dodge_cooldown
         self.doge_last_time = time.perf_counter() - self.playerObject.dodge_cooldown
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
-        self.scene.add_sprite("Walls", arcade.Sprite("Wall.png", center_x=SCREEN_WIDTH/2, center_y=SCREEN_HEIGHT/2 + 128))
-
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
         self.physics_engine = arcade.PhysicsEngineSimple(
-            self.playerObject.playerSprite, self.scene.get_sprite_list("Walls")
+            self.playerObject.playerSprite, self.scene.get_sprite_list("collision")
         )
 
         # Set up the player
