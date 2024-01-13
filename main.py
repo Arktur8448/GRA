@@ -37,7 +37,7 @@ class Game(arcade.Window):
         self.playerObject = pl.Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, arcade.Sprite("Player.png"))  # tworzenie obietu gracza
         self.playerObject.update_pos()
         self.dodge_cooldown = self.playerObject.dodge_cooldown
-        self.doge_last_time = time.perf_counter() - self.playerObject.dodge_cooldown sss
+        self.doge_last_time = time.perf_counter() - self.playerObject.dodge_cooldown
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
         self.scene.add_sprite("Walls", arcade.Sprite("Wall.png", center_x=SCREEN_WIDTH/2, center_y=SCREEN_HEIGHT/2 + 128))
