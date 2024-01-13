@@ -50,6 +50,6 @@ items = [
     Item("axe", "Axe of The Celt", False, False),
     Item("axe", "Axe of The Roman", False, False),
     Item("lance", "Hussar Lance", False, False),
-
+# Miros te bronie do weapon
 
 ]
