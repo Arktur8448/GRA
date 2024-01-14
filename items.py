@@ -28,8 +28,8 @@ class Armor(Item):
         self.strength_requirement = strength_requirement
         self.defence = defence
 
-    def check_weapon(self, player_defence):
-        if self.strength_requirement < player_defence:
+    def check_armor(self, player_strength, player_agility):
+        if self.strength_requirement < player_strength and self.agility_requirement < player_agility:
             return True
         else:
             return False
