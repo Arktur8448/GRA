@@ -1,55 +1,53 @@
 class Item:
-    def __init__(self, typee, name, consumable, stackable):
+    def __init__(self, typee, name, consumable, price_buy, price_sell):
         self.typee = typee
         self.name = name
         self.consumable = consumable
-        self.stackable = stackable
+        self.price_buy = price_buy
+        self.price_sell = price_sell
 
 
-items = [
-    Item("heal", "Small Potion Health", True, True),
-    Item("heal", "Big Potion Health", True, True),
-    Item("heal", "Small Potion Mana", True, True),
-    Item("heal", "Big Potion Mana", True, True),
-    Item("heal", "Small Rejuvenation Potion", True, True),
-    Item("heal", "Big Rejuvenation Potion", True, True),
-    Item("heal", "Stamina Potion", True, True),
-    Item("heal", "Antidote Potion ", True, True),
-    Item("heal", "Gas Potion", True, True),
-    Item("heal", "Oil Potion", True, True),
-    Item("heal", "Thawing Potion", True, True),
-    Item("key", "Key", False, True),
-    Item("amulet", "Silver Amulet", False, False),
-    Item("amulet", "Gold Amulet", False, False),
-    Item("amulet", "Diamond Amulet", False, False),
-    Item("ring", "Wooden Ring", False, False),
-    Item("ring", "Ring of The Witcher", False, False),
-    Item("ring", "Zombie's Ring", False, False),
-    Item("ring", "Villager's Ring", False, False),
-    Item("ring", "Ring of The King", False, False),
-    Item("charm", "Charm of The Attack", False, False),
-    Item("charm", "Charm of The Iron", False, False),
-    Item("charm", "Charm of The Strength", False, False),
-    Item("charm", "Charm of The Steel", False, False),
-    Item("charm", "Charm of The Fire", False, False),
-    Item("gem", "Silver", False, True),
-    Item("gem", "Iron", False, True),
-    Item("gem", "Gold", False, True),
-    Item("gem", "Diamond", False, True),
-    Item("gem", "Emerald", False, True),
-    Item("ore", "Log", False, True),
-    Item("ore", "Stick", False, True),
-    Item("ore", "Rock", False, True),
-    Item("ore", "Rope", False, True),
-    Item("sword", "Sword of The King", False, False),
-    Item("sword", "Sword of The Witcher", False, False),
-    Item("sword", "Sword of The Grandfather", False, False),
-    Item("sword", "Sword of The Zombie", False, False),
-    Item("sword", "Sword of The Lord Kris", False, False),
-    Item("axe", "Axe of The Viking", False, False),
-    Item("axe", "Axe of The Celt", False, False),
-    Item("axe", "Axe of The Roman", False, False),
-    Item("lance", "Hussar Lance", False, False),
-# Miros te bronie do weapon
+class Weapon(Item):
+    def __init__(self, typee, name, consumable, price_buy, price_sell, strength_requirement, agility_requirement, damage, speed):
+        super().__init__(typee, name, consumable, price_buy, price_sell)
+        self.strength_requirement = strength_requirement
+        self.agility_requirement = agility_requirement
+        self.damage = damage
+        self.speed = speed
 
-]
+    def check_weapon(self, player_strength, player_agility):
+        if self.strength_requirement < player_strength and self.agility_requirement < player_agility:
+            return True
+        else:
+            return False
+
+
+class Armor(Item):
+    def __init__(self, typee, name, consumable, price_buy, price_sell, strength_requirement, defence):
+        super().__init__(typee, name, consumable, price_buy, price_sell)
+        self.strength_requirement = strength_requirement
+        self.defence = defence
+
+    def check_weapon(self, player_defence):
+        if self.strength_requirement < player_defence:
+            return True
+        else:
+            return False
+
+
+class Sword(Weapon):
+    def __init__(self, typee, name, consumable, price_buy, price_sell, strength_requirement, agility_requirement, damage, speed, slash_damage, slash_damage_mana_requirement):
+        super().__init__(typee, name, consumable, price_buy, price_sell, strength_requirement, agility_requirement, damage, speed)
+        self.slash_damage = slash_damage
+        self.slash_damage_mana_requirement = slash_damage_mana_requirement
+
+
+class Axe(Weapon):
+    def __init__(self, typee, name, consumable, price_buy, price_sell, strength_requirement, agility_requirement, damage, speed, chop_damage, chop_damage_mana_requirement):
+        super().__init__(typee, name, consumable, price_buy, price_sell, strength_requirement, agility_requirement, damage, speed)
+        self.chop_damage = chop_damage
+        self.chop_damage_mana_requirement = chop_damage_mana_requirement
+
+# speed = co ile sekund atak od momentu kliknienioa przycisku
+# template : Sword_blahblah = Sword("sword", "Sword_blahblah", False, 500, 400, 25, 10, 30, 2, 50, 25)
+# items = [None, Sword_blahblah, axe_coścoś, itp...]
