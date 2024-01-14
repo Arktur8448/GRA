@@ -37,9 +37,15 @@ class Game(arcade.Window):
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
-        self.physics_engine = arcade.PhysicsEngineSimple(
-            self.playerObject.playerSprite, self.scene.get_sprite_list("collision")
-        )
+        self.physics_engine = arcade.PymunkPhysicsEngine(damping=0)
+        self.physics_engine.add_sprite(self.playerObject.playerSprite,
+                                       moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
+                                       collision_type="player",
+                                       max_horizontal_velocity=1000000000000000000000000000000000000000,
+                                       max_vertical_velocity=1000000000000000000000000000000000000000)
+        self.physics_engine.add_sprite_list(self.scene.get_sprite_list("collision"),
+                                            collision_type="wall",
+                                            body_type=arcade.PymunkPhysicsEngine.STATIC)
 
     def on_draw(self):
         """
@@ -57,6 +63,7 @@ class Game(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
+        self.physics_engine.step()
         self.playerObject.movement(self.camera, CAMERA_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT, self.physics_engine)
 
     def on_key_press(self, key, key_modifiers):

@@ -6,9 +6,10 @@ from pyglet.math import Vec2
 class Player:
     def __init__(self, x=0, y=0, sprite=None):
         self.playerSprite = sprite
-        self.movement_speed = 1.5
-        self.sprint_speed = 3
-        self.dodge_distance = 30
+        self.movement_speed = 5000
+        self.sprint_speed = 10000
+        self.max_sprint_speed = 3600
+        self.dodge_distance = 30 * self.movement_speed
         self.dodge_cooldown = 3
         self.doge_last_time = time.perf_counter() - self.dodge_cooldown
         self.x = x
@@ -43,16 +44,16 @@ class Player:
                 speed = self.movement_speed
 
             if arcade.key.W in self.keys:
-                self.playerSprite.change_y = speed
+                physics_engine.apply_force(self.playerSprite, (0, speed))
                 self.direction_move = "Up"
             elif arcade.key.S in self.keys:
-                self.playerSprite.change_y = -speed
+                physics_engine.apply_force(self.playerSprite, (0, -speed))
                 self.direction_move = "Down"
             else:
                 self.playerSprite.change_y = 0
 
             if arcade.key.A in self.keys:
-                self.playerSprite.change_x = -speed
+                physics_engine.apply_force(self.playerSprite, (-speed, 0))
                 if arcade.key.W in self.keys:
                     self.direction_move = "UpLeft"
                 elif arcade.key.S in self.keys:
@@ -60,15 +61,13 @@ class Player:
                 else:
                     self.direction_move = "Left"
             elif arcade.key.D in self.keys:
-                self.playerSprite.change_x = speed
+                physics_engine.apply_force(self.playerSprite, (speed, 0))
                 if arcade.key.W in self.keys:
                     self.direction_move = "UpRight"
                 elif arcade.key.S in self.keys:
                     self.direction_move = "DownRight"
                 else:
                     self.direction_move = "Right"
-            else:
-                self.playerSprite.change_x = 0
 
             if arcade.key.SPACE in self.keys:
                 if time.perf_counter() - self.doge_last_time > self.dodge_cooldown:
@@ -83,34 +82,32 @@ class Player:
 
         def dodge():
             self.doge_last_time = time.perf_counter()
+            dash_force = (0, 0)
             if self.direction_move == "Left":
-                self.playerSprite.change_x = -self.movement_speed * self.dodge_distance
+                dash_force = (-self.dodge_distance, 0)
             elif self.direction_move == "UpLeft":
-                self.playerSprite.change_y = self.movement_speed * self.dodge_distance
-                self.playerSprite.change_x = -self.movement_speed * self.dodge_distance
+                dash_force = (-self.dodge_distance, self.dodge_distance)
             elif self.direction_move == "Up":
-                self.playerSprite.change_y = self.movement_speed * self.dodge_distance
+                dash_force = (0, self.dodge_distance)
 
             elif self.direction_move == "UpRight":
-                self.playerSprite.change_y = self.movement_speed * self.dodge_distance
-                self.playerSprite.change_x = self.movement_speed * self.dodge_distance
+                dash_force = (self.dodge_distance, self.dodge_distance)
 
             elif self.direction_move == "Right":
-                self.playerSprite.change_x = self.movement_speed * self.dodge_distance
+                dash_force = (self.dodge_distance, 0)
 
             elif self.direction_move == "DownRight":
-                self.playerSprite.change_y = -self.movement_speed * self.dodge_distance
-                self.playerSprite.change_x = self.movement_speed * self.dodge_distance
+                dash_force = (self.dodge_distance, -self.dodge_distance)
 
             elif self.direction_move == "Down":
-                self.playerSprite.change_y = -self.movement_speed * self.dodge_distance
+                dash_force = (0, -self.dodge_distance)
 
             elif self.direction_move == "DownLeft":
-                self.playerSprite.change_y = -self.movement_speed * self.dodge_distance
-                self.playerSprite.change_x = -self.movement_speed * self.dodge_distance
+                dash_force = (-self.dodge_distance, -self.dodge_distance)
+
+            physics_engine.apply_force(self.playerSprite, dash_force)
 
         check_move_key()
-        physics_engine.update()
         self.update_pos()
         move_camera_to_player()
 
