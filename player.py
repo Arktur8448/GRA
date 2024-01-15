@@ -23,7 +23,11 @@ class Player:
         self.exp = 0
         self.attribute_points = 0
         self.health = 25
+        self.max_health = 30
         self.mana = 10
+        self.max_mana = 30
+        self.stamina = 20
+        self.max_stamina = 30
         self.strength = 10
         self.defence = 10
         self.agility = 10
@@ -38,10 +42,18 @@ class Player:
     def movement(self, camera, camer_speed, width, height, physics_engine):
         """Pełny Ruch Gracza"""
         def check_move_key():  # aktualizacja pozycji w zależności od naciśniętych klawiszy
-            if arcade.key.LSHIFT in self.keys:
+            if arcade.key.LSHIFT in self.keys and self.stamina > 0:
                 speed = self.sprint_speed
+                if arcade.key.W in self.keys or arcade.key.A in self.keys or arcade.key.S in self.keys or arcade.key.D in self.keys:
+                    self.stamina -= 1/10
+                    if self.stamina < 1:
+                        self.stamina = -5  # jeśli zbyt mocno zużyjesz staminę to musisz bardziej odpocząć, przez chwilę ciężej ci złapać oddech
             else:
                 speed = self.movement_speed
+                if self.stamina < self.max_stamina / 2:
+                    self.stamina += 1/25  # wolniejsze łądowanie staminy jeśli zużjesz ją w więcej niz w połowie
+                elif self.stamina < self.max_stamina:
+                    self.stamina += 1/20
 
             if arcade.key.W in self.keys:
                 physics_engine.apply_force(self.playerSprite, (0, speed))
@@ -70,7 +82,8 @@ class Player:
                     self.direction_move = "Right"
 
             if arcade.key.SPACE in self.keys:
-                if time.perf_counter() - self.doge_last_time > self.dodge_cooldown:
+                if time.perf_counter() - self.doge_last_time > self.dodge_cooldown and self.stamina > 10:
+                    self.stamina -= 10
                     dodge()
 
         def move_camera_to_player():

@@ -21,9 +21,13 @@ class Game(arcade.Window):
 
         self.physics_engine = None
 
-        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.camera = None
+        self.gui_camera = None
 
     def setup(self):
+        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.gui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+
         self.tile_map = arcade.load_tilemap("Maps/village/village.json", 2)
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
         self.scene.add_sprite_list("Player")
@@ -55,6 +59,40 @@ class Game(arcade.Window):
 
         self.scene.draw()
 
+        self.camera.use()
+
+        self.draw_gui()
+
+    def draw_gui(self):
+        self.gui_camera.use()
+        hp = arcade.Text(
+            f"HP: {int(self.playerObject.health)}/{self.playerObject.max_health}",
+            10,
+            SCREEN_HEIGHT - 30,
+            arcade.color.BLACK,
+            20,
+            font_name="Kenney Blocks",
+        )
+        mana = arcade.Text(
+            f"MANA: {int(self.playerObject.mana)}/{self.playerObject.max_mana}",
+            10,
+            SCREEN_HEIGHT - 60,
+            arcade.color.BLACK,
+            20,
+            font_name="Kenney Blocks",
+        )
+        stamina = arcade.Text(
+            f"STAMINA: {int(self.playerObject.stamina)}/{self.playerObject.max_stamina}",
+            10,
+            SCREEN_HEIGHT - 90,
+            arcade.color.BLACK,
+            20,
+            font_name="Kenney Blocks",
+        )
+        box = arcade.draw_rectangle_filled(150, SCREEN_HEIGHT - 50, 300, 100, (205, 127, 50))
+        hp.draw()
+        mana.draw()
+        stamina.draw()
         self.camera.use()
 
     def on_update(self, delta_time):
