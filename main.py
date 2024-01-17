@@ -3,7 +3,7 @@ import player as pl
 
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 540
-SCREEN_TITLE = "GAME"
+SCREEN_TITLE = "THE GAME"
 CAMERA_SPEED = 0.05  # szybokość z jaką kamera nadąża za graczem od 0 do 1
 
 
