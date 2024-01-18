@@ -7,6 +7,32 @@ class Item:
         self.price_sell = price_sell
 
 
+class Food(Item):
+    def __init__(self, typee, name, consumable, price_buy, price_sell,adds_food):
+        super().__init__(typee, name, consumable, price_buy, price_sell)
+        self.adds_food = adds_food
+
+
+class Weapon_Upgrader(Item):
+    def __init__(self, typee, name, consumable, price_buy, price_sell,type_weapon,special_effect):
+        super().__init__(typee, name, consumable, price_buy, price_sell)
+        self.type_weapon = type_weapon
+        self.special_effect = special_effect
+
+
+class Armor_Upgrader(Item):
+    def __init__(self, typee, name, consumable, price_buy, price_sell,type_armor,special_effect):
+        super().__init__(typee, name, consumable, price_buy, price_sell)
+        self.type_weapon = type_armor
+        self.special_effect = special_effect
+
+
+class Ore(Item):
+    def __init__(self, typee, name, consumable, price_buy, price_sell,mining_lucky):
+        super().__init__(typee, name, consumable, price_buy, price_sell)
+        self.mining_lucky = mining_lucky
+
+
 class Key(Item):
     def __init__(self, typee, name, consumable, price_buy, price_sell, special_effect, key_lvl):
         super().__init__(typee, name, consumable, price_buy, price_sell)
@@ -20,6 +46,14 @@ class Potion(Item):
         self.health_gain = health_gain
         self.mana_gain = mana_gain
         self.uses = uses
+
+
+class Posion_Potion(Item):
+    def __init__(self, typee, name, consumable, price_buy, price_sell,health_stolen,mana_stolen,special_effect):
+        super().__init__(typee, name, consumable, price_buy, price_sell)
+        self.health_stolen = health_stolen
+        self.mana_stolen = mana_stolen
+        self.special_effect = special_effect
 
 
 class Ring(Item):
