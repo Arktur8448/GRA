@@ -2,8 +2,8 @@ import arcade
 import player as pl
 import inventory
 
-SCREEN_WIDTH = 960
-SCREEN_HEIGHT = 540
+SCREEN_WIDTH = 992
+SCREEN_HEIGHT = 572
 SCREEN_TITLE = "THE GAME"
 CAMERA_SPEED = 0.05  # szybokość z jaką kamera nadąża za graczem od 0 do 1
 
@@ -128,16 +128,23 @@ class InventoryView(arcade.View):
         self.playerObject = player_object
         self.gameView = game_view
         self.scene = None
-        self.slot = None
+
         self.camera = None
-        arcade.set_background_color()
+
+        self.row_count = 10
+        self.coulum_count = 9
+
+        arcade.set_background_color((42, 42, 42))
 
     def on_show_view(self):
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
-        self.slot = inventory.Slot(arcade.Sprite("sprites/inventory/Slot.png", center_x=SCREEN_WIDTH/2, center_y=SCREEN_HEIGHT/2, scale=10))
         self.scene = arcade.Scene()
         self.scene.add_sprite_list("Slots")
-        self.scene.add_sprite("Slots", self.slot.sprite)
+        for r in range(1, self.row_count+1):
+            for c in range(1, self.coulum_count+1):
+                self.scene.add_sprite("Slots", arcade.Sprite("sprites/inventory/Slot.png",
+                                                             center_x=SCREEN_WIDTH/2+50*c, center_y=SCREEN_HEIGHT-25-50*r,
+                                                             scale=1.5))
 
     def on_draw(self):
         self.clear()
@@ -146,15 +153,16 @@ class InventoryView(arcade.View):
 
     def on_update(self, delta_time):
         if arcade.key.I in self.playerObject.keys:
+            self.gameView.camera.use()
             self.window.show_view(self.gameView)
             del self.playerObject.keys[arcade.key.I]
 
 
 def main():
-    player_object = pl.Player(735, 865, arcade.Sprite("sprites/player/Player.png", 0.75))
+    player_object = pl.Player(735, 865, arcade.Sprite("sprites/player/player_start.png", 1.6))
     window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, player_object)
     start_view = GameView(player_object)
-    window.show_view(InventoryView(player_object,start_view))
+    window.show_view(start_view)
     start_view.setup()
     arcade.run()
 
