@@ -10,7 +10,7 @@ class Player:
         self.sprint_speed = 10000
         self.max_sprint_speed = 3600
         self.dodge_distance = 30 * self.movement_speed
-        self.dodge_cooldown = 3
+        self.dodge_cooldown = 0.8
         self.doge_last_time = time.perf_counter() - self.dodge_cooldown
         self.x = x
         self.y = y

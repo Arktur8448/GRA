@@ -30,14 +30,12 @@ class Game(arcade.Window):
 
         self.tile_map = arcade.load_tilemap("Maps/village/village.json", 2)
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
-        self.scene.add_sprite_list("Player")
         if self.tile_map.background_color:
             arcade.set_background_color(self.tile_map.background_color)
 
+        self.scene.add_sprite_list("Player")
         self.playerObject = pl.Player(735, 865, arcade.Sprite("Player.png", 0.75))  # tworzenie obietu gracza
-
         self.playerObject.update_pos()
-
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
@@ -58,6 +56,7 @@ class Game(arcade.Window):
         self.clear()
 
         self.scene.draw()
+        self.scene.draw_hit_boxes((255, 0, 0), 1, ["Player", "collision"])
 
         self.camera.use()
 
