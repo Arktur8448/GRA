@@ -1,5 +1,6 @@
 import arcade
 import player as pl
+import inventory
 
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 540
@@ -51,7 +52,7 @@ class GameView(arcade.View):
             arcade.set_background_color(self.tile_map.background_color)
 
         self.scene.add_sprite_list("Player")
-        self.playerObject.update_pos()
+
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
@@ -73,7 +74,7 @@ class GameView(arcade.View):
         """
         self.clear()
 
-        self.scene.draw()
+        self.scene.draw(pixelated=True)
         self.scene.draw_hit_boxes((255, 0, 0), 1, ["Player", "collision"])
 
         self.camera.use()
@@ -126,16 +127,22 @@ class InventoryView(arcade.View):
         super().__init__()
         self.playerObject = player_object
         self.gameView = game_view
+        self.scene = None
+        self.slot = None
+        self.camera = None
+        arcade.set_background_color()
 
     def on_show_view(self):
-        arcade.set_background_color(arcade.color.CORN)
+        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.slot = inventory.Slot(arcade.Sprite("sprites/inventory/Slot.png", center_x=SCREEN_WIDTH/2, center_y=SCREEN_HEIGHT/2, scale=10))
+        self.scene = arcade.Scene()
+        self.scene.add_sprite_list("Slots")
+        self.scene.add_sprite("Slots", self.slot.sprite)
 
     def on_draw(self):
         self.clear()
-        arcade.draw_text("Menu Screen", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
-                         arcade.color.BLACK, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to advance.", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
-                         arcade.color.GRAY, font_size=20, anchor_x="center")
+        self.camera.use()
+        self.scene.draw(pixelated=True)
 
     def on_update(self, delta_time):
         if arcade.key.I in self.playerObject.keys:
@@ -144,10 +151,10 @@ class InventoryView(arcade.View):
 
 
 def main():
-    player_object = pl.Player(735, 865, arcade.Sprite("Player.png", 0.75))
-    window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, player_object )
+    player_object = pl.Player(735, 865, arcade.Sprite("sprites/player/Player.png", 0.75))
+    window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, player_object)
     start_view = GameView(player_object)
-    window.show_view(start_view)
+    window.show_view(InventoryView(player_object,start_view))
     start_view.setup()
     arcade.run()
 

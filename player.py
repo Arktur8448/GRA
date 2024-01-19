@@ -8,6 +8,7 @@ DELTA_TIME = 1/60
 class Player:
     def __init__(self, x=0, y=0, sprite=None):
         self.playerSprite = sprite
+        self.update_pos()
         self.movement_speed = 5000
         self.sprint_speed = 10000
         self.max_sprint_speed = 3600
@@ -139,7 +140,7 @@ class Player:
             self.mana += DELTA_TIME * 1
         if self.can_regen_stamina:
             if self.stamina < self.max_stamina / 2:
-                self.stamina += DELTA_TIME * 3.5  # wolniejsze łądowanie staminy jeśli zużjesz ją w więcej niz w połowie
+                self.stamina += DELTA_TIME * 3.5  # wolniejsze ładowanie staminy jeśli zużjesz ją w więcej niz w połowie
             elif self.stamina < self.max_stamina:
                 self.stamina += DELTA_TIME * 3
 
