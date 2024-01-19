@@ -14,7 +14,7 @@ class Game(arcade.Window):
 
         arcade.set_background_color((231, 255, 80))
 
-        self.playerObject = None
+        self.ayplerObject = None
 
         self.tile_map = None
         self.scene = None
