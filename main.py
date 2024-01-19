@@ -7,14 +7,29 @@ SCREEN_TITLE = "THE GAME"
 CAMERA_SPEED = 0.05  # szybokość z jaką kamera nadąża za graczem od 0 do 1
 
 
-class Game(arcade.Window):
-
-    def __init__(self, width, height, title):
+class GameWindow(arcade.Window):
+    def __init__(self, width, height, title, player_object):
         super().__init__(width, height, title)
+        self.playerObject = player_object
+
+    def on_key_press(self, key, key_modifiers):
+        self.playerObject.keys[key] = True
+
+    def on_key_release(self, key, key_modifiers):
+        try:
+            del self.playerObject.keys[key]
+        except:
+            pass
+
+
+class GameView(arcade.View):
+
+    def __init__(self, player_object):
+        super().__init__()
 
         arcade.set_background_color((231, 255, 80))
 
-        self.ayplerObject = None
+        self.playerObject = player_object
 
         self.tile_map = None
         self.scene = None
@@ -23,6 +38,8 @@ class Game(arcade.Window):
 
         self.camera = None
         self.gui_camera = None
+
+        self.inventoryView = None
 
     def setup(self):
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -34,7 +51,6 @@ class Game(arcade.Window):
             arcade.set_background_color(self.tile_map.background_color)
 
         self.scene.add_sprite_list("Player")
-        self.playerObject = pl.Player(735, 865, arcade.Sprite("Player.png", 0.75))  # tworzenie obietu gracza
         self.playerObject.update_pos()
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
@@ -43,11 +59,13 @@ class Game(arcade.Window):
         self.physics_engine.add_sprite(self.playerObject.playerSprite,
                                        moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
                                        collision_type="player",
-                                       max_horizontal_velocity=1000000000000000000000000000000000000000,
-                                       max_vertical_velocity=1000000000000000000000000000000000000000)
+                                       max_horizontal_velocity=1000000,
+                                       max_vertical_velocity=1000000)
         self.physics_engine.add_sprite_list(self.scene.get_sprite_list("collision"),
                                             collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
+
+        self.inventoryView = InventoryView(self.playerObject, self)
 
     def on_draw(self):
         """
@@ -95,25 +113,42 @@ class Game(arcade.Window):
         self.camera.use()
 
     def on_update(self, delta_time):
-        """
-        All the logic to move, and the game logic goes here.
-        Normally, you'll call update() on the sprite lists that
-        need it.
-        """
         self.physics_engine.step()
         self.playerObject.movement(self.camera, CAMERA_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT, self.physics_engine)
+        self.playerObject.regenerate()
+        if arcade.key.I in self.playerObject.keys:
+            self.window.show_view(self.inventoryView)
+            del self.playerObject.keys[arcade.key.I]
 
-    def on_key_press(self, key, key_modifiers):
-        self.playerObject.keys[key] = True
 
-    def on_key_release(self, key, key_modifiers):
-        del self.playerObject.keys[key]
+class InventoryView(arcade.View):
+    def __init__(self, player_object, game_view):
+        super().__init__()
+        self.playerObject = player_object
+        self.gameView = game_view
+
+    def on_show_view(self):
+        arcade.set_background_color(arcade.color.CORN)
+
+    def on_draw(self):
+        self.clear()
+        arcade.draw_text("Menu Screen", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click to advance.", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 75,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
+
+    def on_update(self, delta_time):
+        if arcade.key.I in self.playerObject.keys:
+            self.window.show_view(self.gameView)
+            del self.playerObject.keys[arcade.key.I]
 
 
 def main():
-    """ Main function """
-    game = Game(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
+    player_object = pl.Player(735, 865, arcade.Sprite("Player.png", 0.75))
+    window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, player_object )
+    start_view = GameView(player_object)
+    window.show_view(start_view)
+    start_view.setup()
     arcade.run()
 
 

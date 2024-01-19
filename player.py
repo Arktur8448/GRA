@@ -2,6 +2,8 @@ import arcade
 import time
 from pyglet.math import Vec2
 
+DELTA_TIME = 1/60
+
 
 class Player:
     def __init__(self, x=0, y=0, sprite=None):
@@ -22,15 +24,23 @@ class Player:
         self.level = 1  # base staty
         self.exp = 0
         self.attribute_points = 0
+
         self.health = 25
         self.max_health = 30
+        self.can_regen_health = True
+
         self.mana = 10
         self.max_mana = 30
-        self.stamina = 20
+        self.can_regen_mana = True
+
+        self.stamina = 300
         self.max_stamina = 30
+        self.can_regen_stamina = True
+
         self.strength = 10
         self.defence = 10
         self.agility = 10
+
         self.race = None
         self.weapon = None
 
@@ -43,6 +53,7 @@ class Player:
         """Pełny Ruch Gracza"""
         def check_move_key():  # aktualizacja pozycji w zależności od naciśniętych klawiszy
             if arcade.key.LSHIFT in self.keys and self.stamina > 0:
+                self.can_regen_stamina = False
                 speed = self.sprint_speed
                 if arcade.key.W in self.keys or arcade.key.A in self.keys or arcade.key.S in self.keys or arcade.key.D in self.keys:
                     self.stamina -= 1/10
@@ -50,10 +61,7 @@ class Player:
                         self.stamina = -5  # jeśli zbyt mocno zużyjesz staminę to musisz bardziej odpocząć, przez chwilę ciężej ci złapać oddech
             else:
                 speed = self.movement_speed
-                if self.stamina < self.max_stamina / 2:
-                    self.stamina += 1/25  # wolniejsze łądowanie staminy jeśli zużjesz ją w więcej niz w połowie
-                elif self.stamina < self.max_stamina:
-                    self.stamina += 1/20
+                self.can_regen_stamina = True
 
             if arcade.key.W in self.keys:
                 physics_engine.apply_force(self.playerSprite, (0, speed))
@@ -124,35 +132,20 @@ class Player:
         self.update_pos()
         move_camera_to_player()
 
-    def is_alive(self):
-        if self.health > 0:
-            return True
-        else:
-            return False
+    def regenerate(self):
+        if self.can_regen_health:
+            self.health += DELTA_TIME / 5
+        if self.can_regen_mana:
+            self.mana += DELTA_TIME * 1
+        if self.can_regen_stamina:
+            if self.stamina < self.max_stamina / 2:
+                self.stamina += DELTA_TIME * 3.5  # wolniejsze łądowanie staminy jeśli zużjesz ją w więcej niz w połowie
+            elif self.stamina < self.max_stamina:
+                self.stamina += DELTA_TIME * 3
 
-    def level_up(self):
-        if self.exp >= self.level*50:
-            self.level += 1
-            self.attribute_points += 1
-            return True
-        else:
-            return self.level*50-self.exp
-
-    def redistribute_points(self, stat):
-        if stat == "1":
-            self.health += 10
-            return True
-        elif stat == "2":
-            self.mana += 10
-            return True
-        elif stat == "3":
-            self.strength += 5
-            return True
-        elif stat == "4":
-            self.defence += 5
-            return True
-        elif stat == "5":
-            self.agility += 5
-            return True
-        else:
-            return False
+        if self.health > self.max_health:
+            self.health = self.max_health
+        if self.mana > self.max_mana:
+            self.mana = self.max_mana
+        if self.stamina > self.max_stamina:
+            self.stamina = self.max_stamina
