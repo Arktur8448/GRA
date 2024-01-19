@@ -44,18 +44,12 @@ class Key(Item):
 
 
 class Potion(Item):
-    def __init__(self, item_type, name, price_buy, price_sell, health_gain, mana_gain, uses):
+    def __init__(self, item_type, name, price_buy, price_sell, consumable, health_gain, mana_gain, uses):
         super().__init__(item_type, name, price_buy, price_sell)
+        self.consumable = consumable
         self.health_gain = health_gain
         self.mana_gain = mana_gain
         self.uses = uses
-
-
-class Posion(Item):
-    def __init__(self, item_type, name, price_buy, price_sell, health_stolen, mana_stolen):
-        super().__init__(item_type, name, price_buy, price_sell)
-        self.health_stolen = health_stolen
-        self.mana_stolen = mana_stolen
 
 
 class Ring(Item):
