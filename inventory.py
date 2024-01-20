@@ -103,8 +103,15 @@ class InventoryView(arcade.View):
             x+=48
         del x
 
+        self.scene.get_sprite_list("Slots")[0].held_item = 1
 
         # wszystkie sloty są przechowywane przez sprite_list Slots. Tą spritelist przechowuje scena. Spitelist przechowuje sloty jako tablice.
+
+    def move_item(self):
+        if arcade.key.X in self.playerObject.keys:
+            tmp = self.scene.get_sprite_list("Slots")[1].held_item
+            self.scene.get_sprite_list("Slots")[1].held_item = self.scene.get_sprite_list("Slots")[0].held_item
+            self.scene.get_sprite_list("Slots")[0].held_item = tmp
 
     def on_draw(self):
         self.clear()
@@ -118,5 +125,9 @@ class InventoryView(arcade.View):
             self.gameView.camera.use()
             self.window.show_view(self.gameView)
             del self.playerObject.keys[arcade.key.I]
+        self.move_item()
+
+
+
 
 
