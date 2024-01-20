@@ -108,12 +108,10 @@ class InventoryView(arcade.View):
 
         self.scene.get_sprite_list("Slots")[0].held_item = 1
 
-    def move_item(self):
-        if arcade.key.X in self.playerObject.keys:
-            del self.playerObject.keys[arcade.key.X]
-            tmp = self.scene.get_sprite_list("Slots")[1].held_item
-            self.scene.get_sprite_list("Slots")[1].held_item = self.scene.get_sprite_list("Slots")[0].held_item
-            self.scene.get_sprite_list("Slots")[0].held_item = tmp
+    def move_item(self, form_slot_index, to_slot_index):
+        tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
+        self.scene.get_sprite_list("Slots")[to_slot_index].held_item = self.scene.get_sprite_list("Slots")[form_slot_index].held_item
+        self.scene.get_sprite_list("Slots")[form_slot_index].held_item = tmp
 
     def on_draw(self):
         self.clear()
@@ -124,7 +122,9 @@ class InventoryView(arcade.View):
 
     def on_update(self, delta_time):
         if arcade.key.I in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.I]
             self.gameView.camera.use()
             self.window.show_view(self.gameView)
-            del self.playerObject.keys[arcade.key.I]
-        self.move_item()
+        if arcade.key.X in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.X]
+            self.move_item(0, 1)
