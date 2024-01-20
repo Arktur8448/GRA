@@ -28,8 +28,6 @@ class GameView(arcade.View):
     def __init__(self, player_object):
         super().__init__()
 
-        arcade.set_background_color((231, 255, 80))
-
         self.playerObject = player_object
 
         self.tile_map = None
@@ -66,7 +64,10 @@ class GameView(arcade.View):
                                             collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
 
-        self.inventoryView = InventoryView(self.playerObject, self)
+        self.inventoryView = inventory.InventoryView(self.playerObject, self)
+
+    def on_show_view(self):
+        arcade.set_background_color((231, 255, 80))
 
     def on_draw(self):
         """
@@ -107,7 +108,7 @@ class GameView(arcade.View):
             20,
             font_name="Kenney Blocks",
         )
-        box = arcade.draw_rectangle_filled(150, SCREEN_HEIGHT - 50, 300, 100, (205, 127, 50))
+        arcade.draw_rectangle_filled(150, SCREEN_HEIGHT - 50, 300, 100, (205, 127, 50))
         hp.draw()
         mana.draw()
         stamina.draw()
@@ -119,42 +120,6 @@ class GameView(arcade.View):
         self.playerObject.regenerate()
         if arcade.key.I in self.playerObject.keys:
             self.window.show_view(self.inventoryView)
-            del self.playerObject.keys[arcade.key.I]
-
-
-class InventoryView(arcade.View):
-    def __init__(self, player_object, game_view):
-        super().__init__()
-        self.playerObject = player_object
-        self.gameView = game_view
-        self.scene = None
-
-        self.camera = None
-
-        self.row_count = 10
-        self.coulum_count = 9
-
-        arcade.set_background_color((42, 42, 42))
-
-    def on_show_view(self):
-        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
-        self.scene = arcade.Scene()
-        self.scene.add_sprite_list("Slots")
-        for r in range(1, self.row_count+1):
-            for c in range(1, self.coulum_count+1):
-                self.scene.add_sprite("Slots", arcade.Sprite("sprites/inventory/Slot.png",
-                                                             center_x=SCREEN_WIDTH/2+50*c, center_y=SCREEN_HEIGHT-25-50*r,
-                                                             scale=1.5))
-
-    def on_draw(self):
-        self.clear()
-        self.camera.use()
-        self.scene.draw(pixelated=True)
-
-    def on_update(self, delta_time):
-        if arcade.key.I in self.playerObject.keys:
-            self.gameView.camera.use()
-            self.window.show_view(self.gameView)
             del self.playerObject.keys[arcade.key.I]
 
 
