@@ -1,5 +1,6 @@
 import arcade
 import items
+
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
 
@@ -18,7 +19,9 @@ class Slot(arcade.Sprite):  # Slot jest jednocześnie spritem i obiektem z funck
 
     def show_item(self):
         if self.held_item is not None:
-            sprite = arcade.Sprite("sprites/player/Player.png", center_x=self.center_x, center_y=self.center_y, scale=0.3)
+            sprite = arcade.Sprite("sprites/player/Player.png",
+                                   center_x=self.center_x, center_y=self.center_y,
+                                   scale=0.3)
             sprite.draw()
 
 
@@ -47,18 +50,18 @@ class InventoryView(arcade.View):
                                                     scale=1.5))
 
         self.scene.add_sprite("Slots", Slot("sprites/player/player_base.png",
-                                                    center_x=250,
-                                                    center_y=SCREEN_HEIGHT/1.5,
-                                                    scale=5))
+                                            center_x=250,
+                                            center_y=SCREEN_HEIGHT / 1.5,
+                                            scale=5))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/hat.png",
                                             center_x=249,
-                                            center_y=SCREEN_HEIGHT-70,
+                                            center_y=SCREEN_HEIGHT - 60,
                                             scale=1.5))
         x = 150
         for i in range(0, 2):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
                                                 center_x=x,
-                                                center_y=SCREEN_HEIGHT - 130,
+                                                center_y=SCREEN_HEIGHT - 132,
                                                 scale=1))
             x += 195
         del x
@@ -72,11 +75,11 @@ class InventoryView(arcade.View):
                                             scale=1.5))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/pants.png",
                                             center_x=150,
-                                            center_y=SCREEN_HEIGHT - 226,
+                                            center_y=SCREEN_HEIGHT - 230,
                                             scale=1.5))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
                                             center_x=345,
-                                            center_y=SCREEN_HEIGHT - 226,
+                                            center_y=SCREEN_HEIGHT - 230,
                                             scale=1.5))
         x = 125
         for i in range(0, 2):
@@ -86,7 +89,7 @@ class InventoryView(arcade.View):
                                                 scale=1))
             x += 48
         del x
-        x=320
+        x = 320
         for i in range(0, 2):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
                                                 center_x=x,
@@ -94,21 +97,20 @@ class InventoryView(arcade.View):
                                                 scale=1))
             x += 48
         del x
-        x=174
+        x = 174
         for i in range(0, 4):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
                                                 center_x=x,
                                                 center_y=SCREEN_HEIGHT - 322,
                                                 scale=1.5))
-            x+=48
+            x += 52
         del x
 
         self.scene.get_sprite_list("Slots")[0].held_item = 1
 
-        # wszystkie sloty są przechowywane przez sprite_list Slots. Tą spritelist przechowuje scena. Spitelist przechowuje sloty jako tablice.
-
     def move_item(self):
         if arcade.key.X in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.X]
             tmp = self.scene.get_sprite_list("Slots")[1].held_item
             self.scene.get_sprite_list("Slots")[1].held_item = self.scene.get_sprite_list("Slots")[0].held_item
             self.scene.get_sprite_list("Slots")[0].held_item = tmp
@@ -126,8 +128,3 @@ class InventoryView(arcade.View):
             self.window.show_view(self.gameView)
             del self.playerObject.keys[arcade.key.I]
         self.move_item()
-
-
-
-
-
