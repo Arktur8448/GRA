@@ -1,6 +1,7 @@
 import arcade
 import player as pl
 import inventory
+import items
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572

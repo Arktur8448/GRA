@@ -34,8 +34,20 @@ class InventoryView(arcade.View):
                                                     center_x=SCREEN_WIDTH / 2 + 50 * c,
                                                     center_y=SCREEN_HEIGHT - 25 - 50 * r,
                                                     scale=1.5))
+        Health_Potion = items.Potion("Common", "Small Health Potion", 25, 15, 20, 0, 1)
+        self.scene.get_sprite_list("Slots")[0].held_item = Health_Potion
+        for r in range(1, self.row_count + 1):
+            for c in range(1, self.coulum_count + 1):
+                if type(self.scene.get_sprite_list("Slots")[(r-1)+(c-1)].held_item) == items.Potion:
+                    self.scene.get_sprite_list("Slots")[(r-1)+(c-1)].kill()
+                    self.scene.add_sprite("Slots", Slot("sprites/inventory/hat.png",
+                                                        center_x=SCREEN_WIDTH / 2 + 50 * c,
+                                                        center_y=SCREEN_HEIGHT - 25 - 50 * r,
+                                                        scale=1.5))
+                    print()
 
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Item("TEST", "Tesotwnik", 20, 10)  # pokaz jak działają itemy cz1
+
+        # self.scene.get_sprite_list("Slots")[0].held_item = items.Item("TEST", "Tesotwnik", 20, 10)  # pokaz jak działają itemy cz1
         # wszystkie sloty są przechowywane przez sprite_list Slots. Tą spritelist przechowuje scena. Spitelist przechowuje sloty jako tablice.
 
     def on_draw(self):
@@ -49,5 +61,7 @@ class InventoryView(arcade.View):
             self.window.show_view(self.gameView)
             del self.playerObject.keys[arcade.key.I]
         if arcade.key.X in self.playerObject.keys:  # pokaz jak działają itemy cz2
-            print(self.scene.get_sprite_list("Slots")[0].held_item)  # wyświtlenie testowego itemu
+            print(self.scene.get_sprite_list("Slots")[0].held_item.name)  # wyświtlenie testowego itemu
+            # print(type(self.scene.get_sprite_list("Slots")[0].held_item))
+
 
