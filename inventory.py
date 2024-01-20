@@ -105,13 +105,21 @@ class InventoryView(arcade.View):
                                                 scale=1.5))
             x += 52
         del x
-        x = 126
+        x = 122
         for i in range(0, 6):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
                                                 center_x=x,
                                                 center_y=SCREEN_HEIGHT - 390,
                                                 scale=1.5))
-            x += 48
+            x += 52
+        del x
+        x = 197
+        for i in range(0, 3):
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+                                                center_x=x,
+                                                center_y=SCREEN_HEIGHT - 440,
+                                                scale=1.5))
+            x += 52
         del x
 
         self.scene.get_sprite_list("Slots")[0].held_item = 1
