@@ -1,14 +1,25 @@
 import arcade
 import items
-
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
 
 
 class Slot(arcade.Sprite):  # Slot jest jednocześnie spritem i obiektem z funckjami i wartościami
-    def __init__(self, slot_sprite, center_x, center_y, scale, held_item=None):
+    def __init__(self, slot_sprite, center_x, center_y, scale, type_of_item=None, held_item=None):
         super().__init__(slot_sprite, center_x=center_x, center_y=center_y, scale=scale)
-        self.held_item = held_item
+        self.type_of_item = type_of_item
+        if self.type_of_item is not None:
+            if type(held_item) is self.type_of_item:
+                self.held_item = held_item
+            else:
+                self.held_item = None
+        else:
+            self.held_item = held_item
+
+    def show_item(self):
+        if self.held_item is not None:
+            sprite = arcade.Sprite("sprites/player/Player.png", center_x=self.center_x, center_y=self.center_y, scale=0.3)
+            sprite.draw()
 
 
 class InventoryView(arcade.View):
@@ -34,34 +45,78 @@ class InventoryView(arcade.View):
                                                     center_x=SCREEN_WIDTH / 2 + 50 * c,
                                                     center_y=SCREEN_HEIGHT - 25 - 50 * r,
                                                     scale=1.5))
-        Health_Potion = items.Potion("Common", "Small Health Potion", 25, 15, 20, 0, 1)
-        self.scene.get_sprite_list("Slots")[0].held_item = Health_Potion
-        for r in range(1, self.row_count + 1):
-            for c in range(1, self.coulum_count + 1):
-                if type(self.scene.get_sprite_list("Slots")[(r-1)+(c-1)].held_item) == items.Potion:
-                    self.scene.get_sprite_list("Slots")[(r-1)+(c-1)].kill()
-                    self.scene.add_sprite("Slots", Slot("sprites/inventory/hat.png",
-                                                        center_x=SCREEN_WIDTH / 2 + 50 * c,
-                                                        center_y=SCREEN_HEIGHT - 25 - 50 * r,
-                                                        scale=1.5))
-                    print()
+
+        self.scene.add_sprite("Slots", Slot("sprites/player/player_base.png",
+                                                    center_x=250,
+                                                    center_y=SCREEN_HEIGHT/1.5,
+                                                    scale=5))
+        self.scene.add_sprite("Slots", Slot("sprites/inventory/hat.png",
+                                            center_x=249,
+                                            center_y=SCREEN_HEIGHT-70,
+                                            scale=1.5))
+        x = 150
+        for i in range(0, 2):
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
+                                                center_x=x,
+                                                center_y=SCREEN_HEIGHT - 130,
+                                                scale=1))
+            x += 195
+        del x
+        self.scene.add_sprite("Slots", Slot("sprites/inventory/chest.png",
+                                            center_x=150,
+                                            center_y=SCREEN_HEIGHT - 178,
+                                            scale=1.5))
+        self.scene.add_sprite("Slots", Slot("sprites/inventory/gloves.png",
+                                            center_x=345,
+                                            center_y=SCREEN_HEIGHT - 178,
+                                            scale=1.5))
+        self.scene.add_sprite("Slots", Slot("sprites/inventory/pants.png",
+                                            center_x=150,
+                                            center_y=SCREEN_HEIGHT - 226,
+                                            scale=1.5))
+        self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+                                            center_x=345,
+                                            center_y=SCREEN_HEIGHT - 226,
+                                            scale=1.5))
+        x = 125
+        for i in range(0, 2):
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
+                                                center_x=x,
+                                                center_y=SCREEN_HEIGHT - 274,
+                                                scale=1))
+            x += 48
+        del x
+        x=320
+        for i in range(0, 2):
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
+                                                center_x=x,
+                                                center_y=SCREEN_HEIGHT - 274,
+                                                scale=1))
+            x += 48
+        del x
+        x=174
+        for i in range(0, 4):
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+                                                center_x=x,
+                                                center_y=SCREEN_HEIGHT - 322,
+                                                scale=1.5))
+            x+=48
+        del x
 
 
-        # self.scene.get_sprite_list("Slots")[0].held_item = items.Item("TEST", "Tesotwnik", 20, 10)  # pokaz jak działają itemy cz1
         # wszystkie sloty są przechowywane przez sprite_list Slots. Tą spritelist przechowuje scena. Spitelist przechowuje sloty jako tablice.
 
     def on_draw(self):
         self.clear()
         self.camera.use()
         self.scene.draw(pixelated=True)
+        for s in self.scene.get_sprite_list("Slots"):
+            s.show_item()
 
     def on_update(self, delta_time):
         if arcade.key.I in self.playerObject.keys:
             self.gameView.camera.use()
             self.window.show_view(self.gameView)
             del self.playerObject.keys[arcade.key.I]
-        if arcade.key.X in self.playerObject.keys:  # pokaz jak działają itemy cz2
-            print(self.scene.get_sprite_list("Slots")[0].held_item.name)  # wyświtlenie testowego itemu
-            # print(type(self.scene.get_sprite_list("Slots")[0].held_item))
 
 
