@@ -1,5 +1,6 @@
 import arcade
 import items
+import time
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -170,12 +171,10 @@ class InventoryView(arcade.View):
     def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
         if button == 1:
             for s in self.scene.get_sprite_list("Slots"):
-                if s.collides_with_point((x, y)) and s is not self.hold_item_slot:
-                    try:
-                        s.held_item = self.hold_item
-                        self.hold_item_slot.held_item = None
-                    except:
-                        continue
+                if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item_slot is not None:
+                    s.held_item = self.hold_item
+                    self.hold_item_slot.held_item = None
+
             if self.hold_item:
                 self.hold_item = None
                 self.hold_item_slot.can_show_item = True

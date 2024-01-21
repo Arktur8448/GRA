@@ -123,6 +123,9 @@ class GameView(arcade.View):
             self.window.show_view(self.inventoryView)
             del self.playerObject.keys[arcade.key.I]
 
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        self.scene.add_sprite("Player", arcade.Sprite("sprites/player/Player.png", 3, center_x=self.playerObject.x, center_y=self.playerObject.y))
+
 
 def main():
     player_object = pl.Player(735, 865, arcade.Sprite("sprites/player/player_start.png", 1.6))
