@@ -1,6 +1,9 @@
-class Item:
+import arcade
+
+
+class Item(arcade.Sprite):
     def __init__(self, sprite_path, description, item_rarity, name, price_buy, price_sell):
-        self.sprite_path = sprite_path
+        super().__init__(filename=sprite_path, scale=0.5)
         self.description = description
         self.item_rarity = item_rarity
         self.name = name
@@ -233,13 +236,13 @@ class Shoes(Armor):
 # speed = co ile sekund atak od momentu kliknienioa przycisku
 # template : Sword_blahblah = Sword("sword", "Sword_blahblah", False, 500, 400, 25, 10, 30, 2, 50, 25)
 # items = [None, Sword_blahblah, axe_coścoś, itp...]
-items = [
-    Food("", "", "Apple", 1, 10, 5, 2, 0, 3, True),
-    Key("", "", "Golden Key", "Rare", 150, 100, "Door", 1),
-    Ore("", "", "Iron", "Common", 30, 20, 6, 1),
-    Book(" ", " ", "Spellbook of Fire", "Rare", 200, 150, [None, "fire resistant"], 3, "Armor"),
-    Potion(" ", " ", "Small Health Potion", "Common", 50, 40, 10, 0, 1)
-]
+# items = [
+#     Food("", "", "Apple", 1, 10, 5, 2, 0, 3, True),
+#     Key("", "", "Golden Key", "Rare", 150, 100, "Door", 1),
+#     Ore("", "", "Iron", "Common", 30, 20, 6, 1),
+#     Book(" ", " ", "Spellbook of Fire", "Rare", 200, 150, [None, "fire resistant"], 3, "Armor"),
+#     Potion(" ", " ", "Small Health Potion", "Common", 50, 40, 10, 0, 1)
+# ]
 
 
 

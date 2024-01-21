@@ -17,12 +17,14 @@ class Slot(arcade.Sprite):  # Slot jest jednocześnie spritem i obiektem z funck
         else:
             self.held_item = held_item
 
+        self.can_show_item = True
+
     def show_item(self):
         if self.held_item is not None:
-            sprite = arcade.Sprite("sprites/player/Player.png",
-                                   center_x=self.center_x, center_y=self.center_y,
-                                   scale=0.3)
-            sprite.draw()
+            if self.can_show_item:
+                self.held_item.center_x = self.center_x
+                self.held_item.center_y = self.center_y
+            self.held_item.draw()
 
 
 class InventoryView(arcade.View):
@@ -37,11 +39,15 @@ class InventoryView(arcade.View):
         self.row_count = 10
         self.coulum_count = 9
 
+        self.hold_item = None
+        self.hold_item_slot = None
+
     def on_show_view(self):
         arcade.set_background_color((42, 42, 42))
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.scene = arcade.Scene()
         self.scene.add_sprite_list("Slots")
+        self.scene.add_sprite_list("Player")
         for r in range(1, self.row_count + 1):
             for c in range(1, self.coulum_count + 1):
                 self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
@@ -49,10 +55,10 @@ class InventoryView(arcade.View):
                                                     center_y=SCREEN_HEIGHT - 25 - 50 * r,
                                                     scale=1.5))
 
-        self.scene.add_sprite("Slots", Slot("sprites/player/player_base.png",
-                                            center_x=250,
-                                            center_y=SCREEN_HEIGHT / 1.5,
-                                            scale=5))
+        self.scene.add_sprite("Player", Slot("sprites/player/player_base.png",
+                                             center_x=250,
+                                             center_y=SCREEN_HEIGHT / 1.5,
+                                             scale=5))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/hat.png",
                                             center_x=249,
                                             center_y=SCREEN_HEIGHT - 60,
@@ -122,11 +128,13 @@ class InventoryView(arcade.View):
             x += 52
         del x
 
-        self.scene.get_sprite_list("Slots")[0].held_item = 1
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Item("sprites/player/Player.png", "TEST", "Tesotwnik",
+                                                                      "Test", 10, 20)
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
-        self.scene.get_sprite_list("Slots")[to_slot_index].held_item = self.scene.get_sprite_list("Slots")[form_slot_index].held_item
+        self.scene.get_sprite_list("Slots")[to_slot_index].held_item = self.scene.get_sprite_list("Slots")[
+            form_slot_index].held_item
         self.scene.get_sprite_list("Slots")[form_slot_index].held_item = tmp
 
     def on_draw(self):
@@ -144,3 +152,26 @@ class InventoryView(arcade.View):
         if arcade.key.X in self.playerObject.keys:
             del self.playerObject.keys[arcade.key.X]
             self.move_item(0, 1)
+
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        for s in self.scene.get_sprite_list("Slots"):
+            if s.collides_with_point((x, y)):
+                self.hold_item = s.held_item
+                self.hold_item_slot = s
+                self.hold_item_slot.can_show_item = False
+
+    def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
+                      _buttons: int, _modifiers: int):
+        if self.hold_item:
+            self.hold_item.position = x, y
+
+    def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
+        for s in self.scene.get_sprite_list("Slots"):
+            if s.collides_with_point((x, y)):
+                s.held_item = self.hold_item
+                self.hold_item_slot.held_item = None
+
+        if self.hold_item:
+            self.hold_item = None
+            self.hold_item_slot.can_show_item = True
+            self.hold_item_slot = None
