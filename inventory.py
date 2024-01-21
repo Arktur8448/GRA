@@ -43,6 +43,8 @@ class InventoryView(arcade.View):
         self.hold_item = None
         self.hold_item_slot = None
 
+        self.hold_item_slot_last = None
+
     def on_show_view(self):
         arcade.set_background_color((42, 42, 42))
         self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -171,11 +173,19 @@ class InventoryView(arcade.View):
     def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
         if button == 1:
             for s in self.scene.get_sprite_list("Slots"):
-                if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item_slot is not None:
-                    s.held_item = self.hold_item
-                    self.hold_item_slot.held_item = None
+                if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
+                    try:
+                        s.held_item = self.hold_item
+                        self.hold_item_slot.held_item = None
+                        break
+                    except:
+                        self.hold_item_slot_last = self.hold_item
+
 
             if self.hold_item:
                 self.hold_item = None
                 self.hold_item_slot.can_show_item = True
+                if self.hold_item_slot is not None:
+                    self.hold_item_slot_last = self.hold_item_slot
                 self.hold_item_slot = None
+
