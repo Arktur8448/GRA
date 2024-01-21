@@ -1,5 +1,6 @@
 import arcade
 import items
+import time
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -41,6 +42,8 @@ class InventoryView(arcade.View):
 
         self.hold_item = None
         self.hold_item_slot = None
+
+        self.hold_item_slot_last = None
 
     def on_show_view(self):
         arcade.set_background_color((42, 42, 42))
@@ -128,7 +131,7 @@ class InventoryView(arcade.View):
             x += 52
         del x
 
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Item("sprites/player/Player.png", "TEST", "Tesotwnik",
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Item("sprites/Inventory/ring.png", "TEST", "Tesotwnik",
                                                                       "Test", 10, 20)
 
     def move_item(self, form_slot_index, to_slot_index):
@@ -143,6 +146,7 @@ class InventoryView(arcade.View):
         self.scene.draw(pixelated=True)
         for s in self.scene.get_sprite_list("Slots"):
             s.show_item()
+        self.scene.draw_hit_boxes((255, 0, 0), 1, ["Slots"])
 
     def on_update(self, delta_time):
         if arcade.key.I in self.playerObject.keys:
@@ -154,11 +158,12 @@ class InventoryView(arcade.View):
             self.move_item(0, 1)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        for s in self.scene.get_sprite_list("Slots"):
-            if s.collides_with_point((x, y)):
-                self.hold_item = s.held_item
-                self.hold_item_slot = s
-                self.hold_item_slot.can_show_item = False
+        if button == 1:
+            for s in self.scene.get_sprite_list("Slots"):
+                if s.collides_with_point((x, y)):
+                    self.hold_item = s.held_item
+                    self.hold_item_slot = s
+                    self.hold_item_slot.can_show_item = False
 
     def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
                       _buttons: int, _modifiers: int):
@@ -166,12 +171,21 @@ class InventoryView(arcade.View):
             self.hold_item.position = x, y
 
     def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
-        for s in self.scene.get_sprite_list("Slots"):
-            if s.collides_with_point((x, y)):
-                s.held_item = self.hold_item
-                self.hold_item_slot.held_item = None
+        if button == 1:
+            for s in self.scene.get_sprite_list("Slots"):
+                if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
+                    try:
+                        s.held_item = self.hold_item
+                        self.hold_item_slot.held_item = None
+                        break
+                    except:
+                        self.hold_item_slot_last = self.hold_item
 
-        if self.hold_item:
-            self.hold_item = None
-            self.hold_item_slot.can_show_item = True
-            self.hold_item_slot = None
+
+            if self.hold_item:
+                self.hold_item = None
+                self.hold_item_slot.can_show_item = True
+                if self.hold_item_slot is not None:
+                    self.hold_item_slot_last = self.hold_item_slot
+                self.hold_item_slot = None
+
