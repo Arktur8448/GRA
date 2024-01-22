@@ -8,8 +8,8 @@ SCREEN_HEIGHT = 572
 
 
 class Slash(arcade.Sprite):
-    def __init__(self,center_x, center_y, image_width=60, image_height=20, scale=2):
-        super().__init__(filename="sprites/player/Player.png",
+    def __init__(self,center_x, center_y, image_width=55, image_height=65, scale=1):
+        super().__init__(filename="sprites/player/slash.png",
                          center_x=center_x, center_y=center_y,
                          image_width=image_width, image_height=image_height, scale=scale)
         self.direction = None

@@ -146,7 +146,6 @@ class InventoryView(arcade.View):
         self.scene.draw(pixelated=True)
         for s in self.scene.get_sprite_list("Slots"):
             s.show_item()
-        # self.scene.draw_hit_boxes((255, 0, 0), 1, ["Slots"])
 
     def on_update(self, delta_time):
         if arcade.key.I in self.playerObject.keys:
