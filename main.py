@@ -1,7 +1,7 @@
 import arcade
 import player as pl
 import inventory
-import items
+import fight
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -51,6 +51,7 @@ class GameView(arcade.View):
             arcade.set_background_color(self.tile_map.background_color)
 
         self.scene.add_sprite_list("Player")
+        self.scene.add_sprite_list("Slash")
 
         self.scene.add_sprite("Player", self.playerObject.playerSprite)
 
@@ -77,7 +78,8 @@ class GameView(arcade.View):
         self.clear()
 
         self.scene.draw(pixelated=True)
-        self.scene.draw_hit_boxes((255, 0, 0), 1, ["Player", "collision"])
+        self.scene.draw_hit_boxes((255, 0, 0), 1, ["Player", "collision", "Slash"])
+        self.scene.get_sprite_list("Slash").visible = False
 
         self.camera.use()
 
@@ -119,12 +121,13 @@ class GameView(arcade.View):
         self.physics_engine.step()
         self.playerObject.movement(self.camera, CAMERA_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT, self.physics_engine)
         self.playerObject.regenerate()
+        fight.update(self.playerObject, self.scene)
         if arcade.key.I in self.playerObject.keys:
             self.window.show_view(self.inventoryView)
             del self.playerObject.keys[arcade.key.I]
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        self.scene.add_sprite("Player", arcade.Sprite("sprites/player/Player.png", 3, center_x=self.playerObject.x, center_y=self.playerObject.y))
+        fight.get_slash(self.playerObject, self.scene)
 
 
 def main():
