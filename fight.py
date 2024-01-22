@@ -2,6 +2,9 @@ import arcade
 import time
 
 SLASH_COOLDOWN = 0.5
+MOUSE_MARGIN = 40
+SCREEN_WIDTH = 992
+SCREEN_HEIGHT = 572
 
 
 class Slash(arcade.Sprite):
@@ -12,50 +15,55 @@ class Slash(arcade.Sprite):
         self.direction = None
 
 
-def get_slash(player_object, scene):
+def get_slash(player_object, scene, x, y):
     if len(scene.get_sprite_list("Slash")) == 0:
         slash = Slash(center_x=player_object.x, center_y=player_object.y)
-        match player_object.direction_move:
-            case "Down":
+        x -= SCREEN_WIDTH / 2
+        y -= SCREEN_HEIGHT / 2
+        if -MOUSE_MARGIN < x < MOUSE_MARGIN:
+            if y > 0:
+                slash.direction = "Up"
+                slash.center_x += 0
+                slash.center_y += 60
+            else:
+                slash.direction = "Down"
                 slash.turn_right(180)
                 slash.center_x += 0
-                slash.center_y += -50
-                slash.direction = player_object.direction_move
-            case "DownLeft":
-                slash.turn_left(135)
-                slash.center_x += -25
-                slash.center_y += -50
-                slash.direction = player_object.direction_move
-            case "Left":
-                slash.turn_left(90)
-                slash.center_x += -50
-                slash.center_y += 0
-                slash.direction = player_object.direction_move
-            case "UpLeft":
-                slash.turn_left(45)
-                slash.center_x += -25
-                slash.center_y += 50
-                slash.direction = player_object.direction_move
-            case "Up":
-                slash.center_x += 0
-                slash.center_y += 50
-                slash.direction = player_object.direction_move
-            case "UpRight":
-                slash.turn_right(45)
-                slash.center_x += 25
-                slash.center_y += 50
-                slash.direction = player_object.direction_move
-            case "Right":
+                slash.center_y += -55
+        elif -MOUSE_MARGIN < y < MOUSE_MARGIN:
+            if x > 0:
+                slash.direction = "Right"
                 slash.turn_right(90)
                 slash.center_x += 50
                 slash.center_y += 0
-                slash.direction = player_object.direction_move
-            case "DownRight":
+            else:
+                slash.direction = "Left"
+                slash.turn_left(90)
+                slash.center_x += -50
+                slash.center_y += 0
+        else:
+            if x > MOUSE_MARGIN and y > MOUSE_MARGIN:
+                slash.direction = "UpRight"
+                slash.turn_right(45)
+                slash.center_x += 25
+                slash.center_y += 50
+            elif x < MOUSE_MARGIN < y:
+                slash.direction = "UpLeft"
+                slash.turn_left(45)
+                slash.center_x += -25
+                slash.center_y += 50
+            elif x > MOUSE_MARGIN > y:
+                slash.direction = "DownRight"
                 slash.turn_right(135)
                 slash.center_x += 25
                 slash.center_y += -50
-                slash.direction = player_object.direction_move
+            elif x < MOUSE_MARGIN and y < MOUSE_MARGIN:
+                slash.direction = "DownLeft"
+                slash.turn_left(135)
+                slash.center_x += -25
+                slash.center_y += -50
 
+        print(slash.direction)
         scene.add_sprite("Slash", slash)
 
 
@@ -65,7 +73,6 @@ time_slash = time.perf_counter() - SLASH_COOLDOWN
 def update(player_object, scene):
     global time_slash
     if len(scene.get_sprite_list("Slash")) > 0:
-        print(time.perf_counter() - time_slash)
         if time.perf_counter() - time_slash >= SLASH_COOLDOWN:
             for s in scene.get_sprite_list("Slash"):
                 s.kill()
@@ -76,7 +83,7 @@ def update(player_object, scene):
                 match slash.direction:
                     case "Down":
                         slash.center_x += 0
-                        slash.center_y += -50
+                        slash.center_y += -55
                     case "DownLeft":
                         slash.center_x += -25
                         slash.center_y += -50
@@ -88,7 +95,7 @@ def update(player_object, scene):
                         slash.center_y += 50
                     case "Up":
                         slash.center_x += 0
-                        slash.center_y += 50
+                        slash.center_y += 60
                     case "UpRight":
                         slash.center_x += 25
                         slash.center_y += 50
