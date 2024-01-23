@@ -72,7 +72,7 @@ class InventoryView(arcade.View):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
                                                 x,
                                                 SCREEN_HEIGHT - 132,
-                                                1, "chest"))
+                                                1, "ring"))
             x += 195
         del x
         self.scene.add_sprite("Slots", Slot("sprites/inventory/chest.png",
@@ -132,7 +132,7 @@ class InventoryView(arcade.View):
             x += 52
         del x
 
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "Common", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
@@ -145,20 +145,6 @@ class InventoryView(arcade.View):
 
     def add_item(self, slot_index):
         self.scene.get_sprite_list("Slots")[slot_index].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
-
-    def equip_item(self, from_slot_index, to_slot_index):
-        if self.scene.get_sprite_list("Slots")[from_slot_index].held_item is not None:
-            if self.scene.get_sprite_list("Slots")[from_slot_index].held_item.name == self.scene.get_sprite_list("Slots")[to_slot_index].type_of_item:
-                self.move_item(from_slot_index, to_slot_index)
-            else:
-                print("nope")
-                print(self.scene.get_sprite_list("Slots")[from_slot_index].held_item.name)
-                print(self.scene.get_sprite_list("Slots")[from_slot_index].held_item.item_rarity)
-                print(self.scene.get_sprite_list("Slots")[to_slot_index].type_of_item)
-                # ??????????????????????????????????????????????????? nwm o co chodzi pisze że twoże name = "hat a program pisze że name = "Common", a item_rarity = "hat", ale tak to działa(na testowniku działa), tylko ten błąd z tworzeniem te name
-                # dodawania statystyk też nie zrobie, bo nwm jak dodać do playerObject w mainie byleco
-
-
 
     def on_draw(self):
         self.clear()
@@ -203,9 +189,10 @@ class InventoryView(arcade.View):
             for s in self.scene.get_sprite_list("Slots"):
                 if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
                     try:
-                        s.held_item = self.hold_item
-                        self.hold_item_slot.held_item = None
-                        break
+                        if s.type_of_item == self.hold_item.name or s.type_of_item is None:
+                            s.held_item = self.hold_item
+                            self.hold_item_slot.held_item = None
+                            break
                     except:
                         self.hold_item_slot_last = self.hold_item
 
