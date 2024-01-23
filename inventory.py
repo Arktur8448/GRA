@@ -189,10 +189,11 @@ class InventoryView(arcade.View):
             for s in self.scene.get_sprite_list("Slots"):
                 if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
                     try:
-                        if s.type_of_item == self.hold_item.name or s.type_of_item is None:
-                            s.held_item = self.hold_item
-                            self.hold_item_slot.held_item = None
-                            break
+                        if s.held_item is None:
+                            if s.type_of_item == self.hold_item.name or s.type_of_item is None:
+                                s.held_item = self.hold_item
+                                self.hold_item_slot.held_item = None
+                                break
                     except:
                         self.hold_item_slot_last = self.hold_item
 
