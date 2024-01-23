@@ -3,6 +3,7 @@ import time
 
 SLASH_COOLDOWN = 0.3
 SLASH_STAMINA = 5
+SLASH_DAMAGE = 10
 
 MOUSE_MARGIN = 40
 SCREEN_WIDTH = 992
@@ -67,6 +68,11 @@ def get_slash(player_object, scene, x, y):
                 slash.center_y += -50
 
         scene.add_sprite("Slash", slash)
+        for e in scene.get_sprite_list("NPC"):
+            if arcade.check_for_collision(e, slash):
+                e.health -= SLASH_DAMAGE
+                if e.health <= 0:
+                    e.kill()
 
 
 time_slash = time.perf_counter() - SLASH_COOLDOWN
@@ -120,7 +126,5 @@ def update(player_object, physics_engine, scene):
                         slash.center_y += -50
                         attack_force = (attack_force_power, -attack_force_power)
                 physics_engine.apply_force(player_object, attack_force)
-            for e in scene.get_sprite_list("NPC"):
-                pass
     else:
         time_slash = time.perf_counter()
