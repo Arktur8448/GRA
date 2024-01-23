@@ -121,7 +121,7 @@ class GameView(arcade.View):
         self.physics_engine.step()
         self.playerObject.movement(self.camera, CAMERA_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT, self.physics_engine)
         self.playerObject.regenerate()
-        fight.update(self.playerObject, self.scene)
+        fight.update(self.playerObject, self.physics_engine, self.scene)
         if arcade.key.I in self.playerObject.keys:
             self.window.show_view(self.inventoryView)
             del self.playerObject.keys[arcade.key.I]

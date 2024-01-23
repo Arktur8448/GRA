@@ -1,7 +1,7 @@
 import arcade
 import time
 
-SLASH_COOLDOWN = 0.5
+SLASH_COOLDOWN = 0.3
 MOUSE_MARGIN = 40
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -63,47 +63,59 @@ def get_slash(player_object, scene, x, y):
                 slash.center_x += -25
                 slash.center_y += -50
 
-        print(slash.direction)
         scene.add_sprite("Slash", slash)
 
 
 time_slash = time.perf_counter() - SLASH_COOLDOWN
 
 
-def update(player_object, scene):
+def update(player_object, physics_engine, scene):
     global time_slash
     if len(scene.get_sprite_list("Slash")) > 0:
         if time.perf_counter() - time_slash >= SLASH_COOLDOWN:
             for s in scene.get_sprite_list("Slash"):
                 s.kill()
+                player_object.can_move = True
         else:
+            player_object.can_move = False
             for slash in scene.get_sprite_list("Slash"):
                 slash.center_x = player_object.x
                 slash.center_y = player_object.y
+                attack_force = (0, 0)
+                attack_force_power = 3000
                 match slash.direction:
                     case "Down":
                         slash.center_x += 0
                         slash.center_y += -55
+                        attack_force = (0, -attack_force_power)
                     case "DownLeft":
                         slash.center_x += -25
                         slash.center_y += -50
+                        attack_force = (-attack_force_power, -attack_force_power)
                     case "Left":
                         slash.center_x += -50
                         slash.center_y += 0
+                        attack_force = (-attack_force_power, 0)
                     case "UpLeft":
                         slash.center_x += -25
                         slash.center_y += 50
+                        attack_force = (-attack_force_power, attack_force_power)
                     case "Up":
                         slash.center_x += 0
                         slash.center_y += 60
+                        attack_force = (0, attack_force_power)
                     case "UpRight":
                         slash.center_x += 25
                         slash.center_y += 50
+                        attack_force = (attack_force_power, attack_force_power)
                     case "Right":
                         slash.center_x += 50
                         slash.center_y += 0
+                        attack_force = (attack_force_power, 0)
                     case "DownRight":
                         slash.center_x += 25
                         slash.center_y += -50
+                        attack_force = (attack_force_power, -attack_force_power)
+                physics_engine.apply_force(player_object.playerSprite, attack_force)
     else:
         time_slash = time.perf_counter()

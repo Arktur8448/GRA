@@ -21,6 +21,7 @@ class Player:
         self.playerSprite.center_y = self.y
         self.keys = {}
         self.direction_move = "Down"
+        self.can_move = True
 
         self.level = 1  # base staty
         self.exp = 0
@@ -129,9 +130,10 @@ class Player:
 
             physics_engine.apply_force(self.playerSprite, dash_force)
 
-        check_move_key()
         self.update_pos()
-        move_camera_to_player()
+        if self.can_move:
+            check_move_key()
+            move_camera_to_player()
 
     def regenerate(self):
         if self.can_regen_health:
