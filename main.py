@@ -53,11 +53,11 @@ class GameView(arcade.View):
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite_list("Slash")
 
-        self.scene.add_sprite("Player", self.playerObject.playerSprite)
+        self.scene.add_sprite("Player", self.playerObject)
 
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=0)
-        self.physics_engine.add_sprite(self.playerObject.playerSprite,
+        self.physics_engine.add_sprite(self.playerObject,
                                        moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
                                        collision_type="player",
                                        max_horizontal_velocity=1000000,
@@ -131,7 +131,7 @@ class GameView(arcade.View):
 
 
 def main():
-    player_object = pl.Player(735, 865, arcade.Sprite("sprites/player/player_start.png", 1.6))
+    player_object = pl.Player("sprites/player/player_start.png", 735, 865)
     window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, player_object)
     start_view = GameView(player_object)
     window.show_view(start_view)

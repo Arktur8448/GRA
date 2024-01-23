@@ -17,7 +17,7 @@ class Slash(arcade.Sprite):
 
 def get_slash(player_object, scene, x, y):
     if len(scene.get_sprite_list("Slash")) == 0:
-        slash = Slash(center_x=player_object.x, center_y=player_object.y)
+        slash = Slash(center_x=player_object.center_x, center_y=player_object.center_y)
         x -= SCREEN_WIDTH / 2
         y -= SCREEN_HEIGHT / 2
         if -MOUSE_MARGIN < x < MOUSE_MARGIN:
@@ -79,8 +79,8 @@ def update(player_object, physics_engine, scene):
         else:
             player_object.can_move = False
             for slash in scene.get_sprite_list("Slash"):
-                slash.center_x = player_object.x
-                slash.center_y = player_object.y
+                slash.center_x = player_object.center_x
+                slash.center_y = player_object.center_y
                 attack_force = (0, 0)
                 attack_force_power = 3000
                 match slash.direction:
@@ -116,6 +116,6 @@ def update(player_object, physics_engine, scene):
                         slash.center_x += 25
                         slash.center_y += -50
                         attack_force = (attack_force_power, -attack_force_power)
-                physics_engine.apply_force(player_object.playerSprite, attack_force)
+                physics_engine.apply_force(player_object, attack_force)
     else:
         time_slash = time.perf_counter()
