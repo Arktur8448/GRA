@@ -1,6 +1,7 @@
 import arcade
 import items
 import time
+import player
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -54,24 +55,24 @@ class InventoryView(arcade.View):
         for r in range(1, self.row_count + 1):
             for c in range(1, self.coulum_count + 1):
                 self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
-                                                    center_x=SCREEN_WIDTH / 2 + 50 * c,
-                                                    center_y=SCREEN_HEIGHT - 25 - 50 * r,
-                                                    scale=1.5))
+                                                    SCREEN_WIDTH / 2 + 50 * c,
+                                                    SCREEN_HEIGHT - 25 - 50 * r,
+                                                    1.5))
 
         self.scene.add_sprite("Player", Slot("sprites/player/player_base.png",
-                                             center_x=250,
-                                             center_y=SCREEN_HEIGHT / 1.5,
-                                             scale=5))
+                                             250,
+                                             SCREEN_HEIGHT / 1.5,
+                                             5))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/hat.png",
-                                            center_x=249,
-                                            center_y=SCREEN_HEIGHT - 60,
-                                            scale=1.5))
+                                            249,
+                                            SCREEN_HEIGHT - 60,
+                                            1.5, "hat"))
         x = 150
         for i in range(0, 2):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
-                                                center_x=x,
-                                                center_y=SCREEN_HEIGHT - 132,
-                                                scale=1))
+                                                x,
+                                                SCREEN_HEIGHT - 132,
+                                                1, "chest"))
             x += 195
         del x
         self.scene.add_sprite("Slots", Slot("sprites/inventory/chest.png",
@@ -131,14 +132,33 @@ class InventoryView(arcade.View):
             x += 52
         del x
 
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Item("sprites/Inventory/ring.png", "TEST", "Tesotwnik",
-                                                                      "Test", 10, 20)
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "Common", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
         self.scene.get_sprite_list("Slots")[to_slot_index].held_item = self.scene.get_sprite_list("Slots")[
             form_slot_index].held_item
         self.scene.get_sprite_list("Slots")[form_slot_index].held_item = tmp
+
+    def delete_item(self, slot_index):
+        self.scene.get_sprite_list("Slots")[slot_index].held_item = None
+
+    def add_item(self, slot_index):
+        self.scene.get_sprite_list("Slots")[slot_index].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+
+    def equip_item(self, from_slot_index, to_slot_index):
+        if self.scene.get_sprite_list("Slots")[from_slot_index].held_item is not None:
+            if self.scene.get_sprite_list("Slots")[from_slot_index].held_item.name == self.scene.get_sprite_list("Slots")[to_slot_index].type_of_item:
+                self.move_item(from_slot_index, to_slot_index)
+            else:
+                print("nope")
+                print(self.scene.get_sprite_list("Slots")[from_slot_index].held_item.name)
+                print(self.scene.get_sprite_list("Slots")[from_slot_index].held_item.item_rarity)
+                print(self.scene.get_sprite_list("Slots")[to_slot_index].type_of_item)
+                # ??????????????????????????????????????????????????? nwm o co chodzi pisze że twoże name = "hat a program pisze że name = "Common", a item_rarity = "hat", ale tak to działa(na testowniku działa), tylko ten błąd z tworzeniem te name
+                # dodawania statystyk też nie zrobie, bo nwm jak dodać do playerObject w mainie byleco
+
+
 
     def on_draw(self):
         self.clear()
@@ -156,6 +176,15 @@ class InventoryView(arcade.View):
         if arcade.key.X in self.playerObject.keys:
             del self.playerObject.keys[arcade.key.X]
             self.move_item(0, 1)
+        if arcade.key.D in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.D]
+            self.delete_item(0)
+        if arcade.key.A in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.A]
+            self.add_item(3)
+        if arcade.key.E in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.E]
+            self.equip_item(0, 90)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         if button == 1:
