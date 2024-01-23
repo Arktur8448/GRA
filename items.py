@@ -3,7 +3,7 @@ import arcade
 
 class Item(arcade.Sprite):
     def __init__(self, sprite_path, description, item_rarity, name, price_buy, price_sell):
-        super().__init__(filename=sprite_path, scale=0.5)
+        super().__init__(filename=sprite_path, scale=1)
         self.description = description
         self.item_rarity = item_rarity
         self.name = name
@@ -18,7 +18,17 @@ class Food(Item):
         self.regen_mana = regen_mana
         self.time_regen = time_regen
         self.consumable = consumable
+        self.action = [
+            ["Eat", self.eat],
+            ["Drop", self.drop]
+        ]
 
+    def eat(self, player):
+        player.health += self.regen_health
+
+    def drop(self):
+        pass
+        #wyrzucanie itemow
 
 class Upgrader(Item):
     def __init__(self, sprite_path, description, name, item_rarity, price_buy, price_sell, special_effect, lvl_upgrader):
@@ -44,6 +54,13 @@ class Ore(Item):
         super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell)
         self.mining_lucky = mining_lucky
         self.lvl_ore = lvl_ore
+        self.action = [
+            ["Drop", self.drop]
+        ]
+
+    def drop(self):
+        pass
+        #wydupca z equ
 
     def extralucky(self, lucky_lvl):
         self.mining_lucky *= lucky_lvl
@@ -56,10 +73,17 @@ class Ore(Item):
 
 
 class Key(Item):
-    def __init__(self, sprite_path, description, name, item_rarity="Common", price_buy=0, price_sell=0, destination=0, key_lvl=1):
-        super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell)
+    def __init__(self, sprite_path, description, name, price_buy=0, price_sell=0, destination="First Village", key_lvl=1):
+        super().__init__(sprite_path, description, name, 0, price_buy, price_sell)
         self.destination = destination
         self.key_lvl = key_lvl
+        self.action = [
+            ["Drop", self.drop]
+        ]
+
+    def drop(self):
+        pass
+        #WYDUPIA
 
     def check_lvl(self, player_lvl):
         if player_lvl == self.key_lvl:
@@ -77,21 +101,38 @@ class Key(Item):
 
 
 class Potion(Item):
-    def __init__(self, sprite_path, description, name, item_rarity="Common", price_buy=0, price_sell=0, health_gain=0, mana_gain=0, uses=0):
+    def __init__(self, sprite_path, description, name, item_rarity="Common", price_buy=0, price_sell=0, health_gain=0, mana_gain=0, stamina_gain=0, strength_gain=0):
         super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell)
         self.health_gain = health_gain
         self.mana_gain = mana_gain
-        self.uses = uses
+        self.stamina_gain = stamina_gain
+        self.strength_gain = strength_gain
+        self.action = [
+            ["Use", self.use],
+            ["Drop", self.drop]
+        ]
+
+    def use(self,player):
+        player.health += self.health_gain
+        player.mana += self.mana_gain
+        player.stamina += self.stamina_gain
+        player.strength += self.strength_gain
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Accessories(Item):
-    def __init__(self, sprite_path, description,  item_rarity, name, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, lvl_accessory):
+    def __init__(self, sprite_path, description,  item_rarity, name, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, extra_stamina, extra_strength, lvl_accessory):
         super().__init__(sprite_path, description, item_rarity, name, price_buy, price_sell)
         self.special_effect = special_effect
         self.extra_health = extra_health
         self.extra_mana = extra_mana
         self.extra_damage = extra_damage
         self.extra_defence = extra_defence
+        self.extra_stamina = extra_stamina
+        self.extra_strength = extra_strength
         self.lvl_accessory = lvl_accessory
 
     def check_lvl(self, player_lvl):
@@ -102,18 +143,56 @@ class Accessories(Item):
 
 
 class Ring(Accessories):
-    def __init__(self, sprite_path, description, name,  item_rarity="Common", price_buy=0, price_sell=0, special_effect=0, extra_health=0, extra_mana=0, extra_damage=0, extra_defence=0, lvl_accessory=1):
-        super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, lvl_accessory)
+    def __init__(self, sprite_path, description, name,  item_rarity="Common", price_buy=0, price_sell=0, special_effect=0, extra_health=0, extra_mana=0, extra_damage=0, extra_defence=0, extra_stamina=0, extra_strength=0, lvl_accessory=1):
+        super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, extra_stamina, extra_strength, lvl_accessory)
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Amulet(Accessories):
-    def __init__(self, sprite_path, description, name,  item_rarity="Common", price_buy=0, price_sell=0, special_effect=0, extra_health=0, extra_mana=0, extra_damage=0, extra_defence=0, lvl_accessory=1):
-        super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, lvl_accessory)
+    def __init__(self, sprite_path, description, name,  item_rarity="Common", price_buy=0, price_sell=0, special_effect=0, extra_health=0, extra_mana=0, extra_damage=0, extra_defence=0, extra_stamina=0, extra_strength=0, lvl_accessory=1):
+        super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, extra_stamina, extra_strength, lvl_accessory)
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
+
 
 
 class Necklace(Accessories):
-    def __init__(self, sprite_path, description, name,  item_rarity="Common", price_buy=0, price_sell=0, special_effect=0, extra_health=0, extra_mana=0, extra_damage=0, extra_defence=0, lvl_accessory=1):
-        super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, lvl_accessory)
+    def __init__(self, sprite_path, description, name,  item_rarity="Common", price_buy=0, price_sell=0, special_effect=0, extra_health=0, extra_mana=0, extra_damage=0, extra_defence=0, extra_stamina=0, extra_strength=0, lvl_accessory=1):
+        super().__init__(sprite_path, description, name, item_rarity, price_buy, price_sell, special_effect, extra_health, extra_mana, extra_damage, extra_defence, extra_stamina, extra_strength, lvl_accessory)
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
+
 
 
 class Weapon(Item):
@@ -150,6 +229,18 @@ class Sword(Weapon):
         self.charge_damage = charge_damage
         self.charge_damage_mana_requirement = charge_damage_mana_requirement
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Axe(Weapon):
@@ -160,6 +251,18 @@ class Axe(Weapon):
         self.charge_damage = charge_damage
         self.charge_damage_mana_requirement = charge_damage_mana_requirement
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Lance(Weapon):
@@ -170,6 +273,18 @@ class Lance(Weapon):
         self.charge_damage = charge_damage
         self.charge_damage_mana_requirement = charge_damage_mana_requirement
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Armor(Item):
@@ -202,6 +317,18 @@ class Hat(Armor):
                  lvl_armor=1):
         super().__init__(sprite_path, description, name, item_rarity,price_buy, price_sell, strength_requirement, agility_requirement, defence, lvl_armor)
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class ChestPlate(Armor):
@@ -209,6 +336,18 @@ class ChestPlate(Armor):
                  lvl_armor=1):
         super().__init__(sprite_path, description, name, item_rarity,price_buy, price_sell, strength_requirement, agility_requirement, defence, lvl_armor)
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Gloves(Armor):
@@ -216,6 +355,18 @@ class Gloves(Armor):
                  lvl_armor=1):
         super().__init__(sprite_path, description, name, item_rarity,price_buy, price_sell, strength_requirement, agility_requirement, defence, lvl_armor)
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Pants(Armor):
@@ -223,6 +374,18 @@ class Pants(Armor):
                  lvl_armor=1):
         super().__init__(sprite_path, description, name, item_rarity,price_buy, price_sell, strength_requirement, agility_requirement, defence, lvl_armor)
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 class Shoes(Armor):
@@ -230,19 +393,71 @@ class Shoes(Armor):
                  lvl_armor=1):
         super().__init__(sprite_path, description, name, item_rarity,price_buy, price_sell, strength_requirement, agility_requirement, defence, lvl_armor)
         self.special_effect = special_effect if special_effect else []
+        self.action = [
+            ["Equip", self.equip],
+            ["Drop", self.drop]
+        ]
+
+    def equip(self):
+        pass
+        # zakladnie
+
+    def drop(self):
+        pass
+        # wydupia
 
 
 
 # speed = co ile sekund atak od momentu kliknienioa przycisku
 # template : Sword_blahblah = Sword("sword", "Sword_blahblah", False, 500, 400, 25, 10, 30, 2, 50, 25)
 # items = [None, Sword_blahblah, axe_coścoś, itp...]
-# items = [
-#     Food("", "", "Apple", 1, 10, 5, 2, 0, 3, True),
-#     Key("", "", "Golden Key", "Rare", 150, 100, "Door", 1),
-#     Ore("", "", "Iron", "Common", 30, 20, 6, 1),
-#     Book(" ", " ", "Spellbook of Fire", "Rare", 200, 150, [None, "fire resistant"], 3, "Armor"),
-#     Potion(" ", " ", "Small Health Potion", "Common", 50, 40, 10, 0, 1)
-# ]
+
+items = [
+    None,
+    Food("sprites/enemy/lobotomy.png", "", "Apple", 1, 10, 5, 2, 0, 3, True),
+    Food("sprites/enemy/lobotomy.png", "", "Bread", 2, 20, 10, 3, 0, 3, True),
+    Food("sprites/enemy/lobotomy.png", "", "Cheese", 4, 25, 20, 1, 1, 5, True),
+    Food("sprites/enemy/lobotomy.png", "", "Soup", 3, 20, 15, 2, 2, 2, True),
+    Food("sprites/enemy/lobotomy.png", "", "Steak", 5, 40, 35, 5, 1, 2, True),
+    Food("sprites/enemy/lobotomy.png", "", "Salad", 3, 25, 20, 2, 3, 2, True),
+    Food("sprites/enemy/lobotomy.png", "", "Chocolate Bar", 6, 15, 10, 3, 3, 3, True),
+    Food("sprites/enemy/lobotomy.png", "", "Fruit Smoothie", 3, 20, 15, 2, 1, 3, True),
+    Food("sprites/enemy/lobotomy.png", "", "Carrot", 1, 8, 6, 2, 0, 2, True),
+    Food("sprites/enemy/lobotomy.png", "", "Golden Apple", 7, 50, 40, 3, 3, 5, True),
+
+    Key("sprites/enemy/lobotomy.png", "", "King's Room Key", 200, 150, "King's Room", 1),
+    Key("sprites/enemy/lobotomy.png", "", "Boss's Room Key", 200, 150, "Boss's Room Key", 1),
+    Key("sprites/enemy/lobotomy.png", "", "Mystical Key", 200, 150, "Mystical Door", 1),
+    Key("sprites/enemy/lobotomy.png", "", "Ancient Key", 200, 150, "Ancient Temple Door", 1),
+    Key("sprites/enemy/lobotomy.png", "", "Golden Key", 200, 150, "Golden Room", 1),
+
+    Ore("sprites/enemy/lobotomy.png", "", "Iron", "Common", 25, 20, 2, 1),
+    Ore("sprites/enemy/lobotomy.png", "", "Gold", "Rare", 40, 35, 3, 2),
+    Ore("sprites/enemy/lobotomy.png", "", "Copper", "Common", 20, 15, 2, 1),
+    Ore("sprites/enemy/lobotomy.png", "", "Diamond", "Rare", 50, 45, 4, 3),
+    Ore("sprites/enemy/lobotomy.png", "", "Ruby", "Ultra Rare", 75, 60, 5, 3),
+    Ore("sprites/enemy/lobotomy.png", "", "Emerald", "Rare", 60, 50, 4, 3),
+
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Fire", "Rare", 200, 150, [None, "fire resistant"], 2, "Armor"),
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Durability", "Rare", 200, 150, [None, "durability"], 2, "Armor"),
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Thorns", "Rare", 200, 150, [None, "thorns"], 3, "Armor"),
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Speed", "Rare", 200, 150, [None, "speed"], 3, "Armor"),
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Fire Aspect", "Rare", 200, 150, [None, "fire aspect"], 2, "Weapon"),
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Knockback", "Rare", 200, 150, [None, "knockback"], 3, "Weapon"),
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Sharpness", "Rare", 200, 150, [None, "sharpness"], 3, "Weapon"),
+    Book("sprites/enemy/lobotomy.png", " ", "Spellbook of Looting", "Rare", 200, 150, [None, "looking"], 3,
+         "Weapon"),
+
+    Potion("sprites/enemy/lobotomy.png", " ", "Small Health Potion", "Common", 25, 20, 5, 0, 0, 0,),
+    Potion("sprites/enemy/lobotomy.png", " ", "Big Health Potion", "Common", 50, 40, 10, 0, 0, 0),
+    Potion("sprites/enemy/lobotomy.png", " ", "Small Mana Potion", "Common", 25, 20, 0, 5, 0, 0),
+    Potion("sprites/enemy/lobotomy.png", " ", "Big Mana Potion", "Common", 50, 40, 0, 10, 0, 0),
+    Potion("sprites/enemy/lobotomy.png", " ", "Strength Potion", "Common", 60, 50, 0, 0, 0, 10),
+    Potion("sprites/enemy/lobotomy.png", " ", "Stamina Potion", "Common", 75, 60, 0, 0, 10, 0),
+    Potion("sprites/enemy/lobotomy.png", " ", "Energy Drink", "Common", 80, 70, 0, 0, 10, 10),
+
+    Ring("sprites/enemy/lobotomy.png", " ", "King's Ring", "Epic", 0, 250, 10, 10, 5, 3, lvl_accessory=1)
+ ]
 
 
 

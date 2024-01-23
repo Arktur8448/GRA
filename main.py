@@ -1,7 +1,8 @@
 import arcade
 import player as pl
 import inventory
-import items
+import fight
+import NPC as npc
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -51,12 +52,15 @@ class GameView(arcade.View):
             arcade.set_background_color(self.tile_map.background_color)
 
         self.scene.add_sprite_list("Player")
+        self.scene.add_sprite_list("Slash")
+        self.scene.add_sprite("Player", self.playerObject)
 
-        self.scene.add_sprite("Player", self.playerObject.playerSprite)
+        self.scene.add_sprite_list("NPC")
+        self.scene.add_sprite("NPC", npc.NPC("sprites/player/player_base.png", "WRUG", "Straszny Frug", 735, 835, health=30))
 
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=0)
-        self.physics_engine.add_sprite(self.playerObject.playerSprite,
+        self.physics_engine.add_sprite(self.playerObject,
                                        moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
                                        collision_type="player",
                                        max_horizontal_velocity=1000000,
@@ -64,6 +68,9 @@ class GameView(arcade.View):
         self.physics_engine.add_sprite_list(self.scene.get_sprite_list("collision"),
                                             collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
+        self.physics_engine.add_sprite_list(self.scene.get_sprite_list("NPC"),
+                                            collision_type="NPC",
+                                            moment_of_intertia=1000000)
 
         self.inventoryView = inventory.InventoryView(self.playerObject, self)
 
@@ -77,7 +84,8 @@ class GameView(arcade.View):
         self.clear()
 
         self.scene.draw(pixelated=True)
-        self.scene.draw_hit_boxes((255, 0, 0), 1, ["Player", "collision"])
+        self.scene.draw_hit_boxes((255, 0, 0), 1, ["Player", "collision", "Slash", "NPC"])
+        self.scene.get_sprite_list("Slash").visible = False
 
         self.camera.use()
 
@@ -118,17 +126,18 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         self.physics_engine.step()
         self.playerObject.movement(self.camera, CAMERA_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT, self.physics_engine)
-        self.playerObject.regenerate()
+        self.playerObject.update_player(self.physics_engine)
+        fight.update(self.playerObject, self.physics_engine, self.scene)
         if arcade.key.I in self.playerObject.keys:
             self.window.show_view(self.inventoryView)
             del self.playerObject.keys[arcade.key.I]
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        self.scene.add_sprite("Player", arcade.Sprite("sprites/player/Player.png", 3, center_x=self.playerObject.x, center_y=self.playerObject.y))
+        fight.get_slash(self.playerObject, self.scene, x, y)
 
 
 def main():
-    player_object = pl.Player(735, 865, arcade.Sprite("sprites/player/player_start.png", 1.6))
+    player_object = pl.Player("sprites/player/player_start.png", 735, 865)
     window = GameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, player_object)
     start_view = GameView(player_object)
     window.show_view(start_view)

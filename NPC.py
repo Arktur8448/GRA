@@ -1,34 +1,26 @@
-class NPC:                                                                                     # tablica
-    def __init__(self, name, description, level, exp_drop, health, mana, strength, defence, agility, race, weapon, drop, to_sell, dialogues):
+import arcade
+import items
+import inventory
+
+
+class NPC (arcade.Sprite):
+    def __init__(self, filename, name, description, pos_x, pos_y, level=1, exp_drop=0, health=1, strength=1, defence=1, agility=1, race=None,
+                 weapon=None, drop=None, to_sell=None):
+        super().__init__(filename=filename, center_x=pos_x, center_y=pos_y, scale=1.6)
         self.name = name
-        self.description = description # opis npc'ta
+        self.description = description
         self.level = level
         self.exp_drop = exp_drop
         self.health = health
-        self.mana = mana
+        self.max_health = self.health
         self.strength = strength
         self.defence = defence
         self.agility = agility
         self.race = race
-        self.weapon = weapon
-        self.drop = drop
-        self.to_sell = to_sell
-        # jako tablica 2 wymiarowa [[(tutaj dajesz item który zrobisz używając klasy), cena], itd...] np.: (Health_Potion, Health_Potion.price_buy)
-        self.dialogues = dialogues
-
-    def interact(self, option):
-        if option is None:
-            return self.dialogues[0]
-        else:
-            return self.dialogues[option]
-
-    # def buy(self, option, players_money):
-    #     if players_money >= self.to_sell[option][1]:
-    #         Player.inventory.append(self.to_sell[option][0]) nwm coś w tym stylu jak będzie inventory to zronbie
-    #         return players_money-self.to_sell[option][1]
-    #     else:
-    #         return False
-    # coś w tym stylu nwm
+        self.weapon = weapon if weapon else []
+        self.drop = drop if drop else []
+        self.to_sell = to_sell if to_sell else []
+        # jako tablica 2 wymiarowa [[(tutaj dajesz item który zrobisz używając klasy), cena], itd...] np.: (Health_Potion, Health_Potion.price_buy
 
     def is_alive(self):
         if self.health > 0:
@@ -36,6 +28,7 @@ class NPC:                                                                      
         else:
             return False
 
-# dialogues = piszesz w tablicy !!!1!!!!!111!!
-# drop = piszesz w tablicy też !!!1!!!!!111!!
-# a to_sell? też w TABLICY !!!1!!!11!!!!1
+# class Mage(NPC):
+#     pass
+#     def use_spell(self, player):
+#         pass
