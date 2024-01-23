@@ -120,7 +120,7 @@ class GameView(arcade.View):
     def on_update(self, delta_time):
         self.physics_engine.step()
         self.playerObject.movement(self.camera, CAMERA_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT, self.physics_engine)
-        self.playerObject.regenerate()
+        self.playerObject.update_player(self.physics_engine)
         fight.update(self.playerObject, self.physics_engine, self.scene)
         if arcade.key.I in self.playerObject.keys:
             self.window.show_view(self.inventoryView)

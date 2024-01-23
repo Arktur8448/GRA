@@ -11,9 +11,14 @@ class Player(arcade.Sprite):
         self.movement_speed = 5000
         self.sprint_speed = 10000
         self.max_sprint_speed = 3600
-        self.dodge_distance = 30 * self.movement_speed
-        self.dodge_cooldown = 0.8
-        self.doge_last_time = time.perf_counter() - self.dodge_cooldown
+        
+        self.dash_distance = 2000
+        self.dash_cooldown = 0.1
+        self.dash_force = [0, 0]
+        self.default_dash_duration = 0.3
+        self.dash_duration = 0
+        self.dash_last_time = time.perf_counter() - self.dash_cooldown
+
         self.keys = {}
         self.direction_move = "Down"
         self.can_move = True
@@ -30,7 +35,7 @@ class Player(arcade.Sprite):
         self.max_mana = 30
         self.can_regen_mana = True
 
-        self.stamina = 300
+        self.stamina = 30
         self.max_stamina = 30
         self.can_regen_stamina = True
 
@@ -82,9 +87,9 @@ class Player(arcade.Sprite):
                     self.direction_move = "Right"
 
             if arcade.key.SPACE in self.keys:
-                if time.perf_counter() - self.doge_last_time > self.dodge_cooldown and self.stamina > 10:
+                if time.perf_counter() - self.dash_last_time > self.dash_cooldown and self.stamina > 10:
                     self.stamina -= 10
-                    dodge()
+                    dash()
 
         def move_camera_to_player():
             position = Vec2(
@@ -93,38 +98,39 @@ class Player(arcade.Sprite):
             )
             camera.move_to(position, camer_speed)
 
-        def dodge():
-            self.doge_last_time = time.perf_counter()
-            dash_force = (0, 0)
+        def dash():
+            self.dash_last_time = time.perf_counter()
+            self.dash_duration = self.default_dash_duration
+            self.dash_force = [0, 0]
             if self.direction_move == "Left":
-                dash_force = (-self.dodge_distance, 0)
+                self.dash_force = [-self.dash_distance, 0]
             elif self.direction_move == "UpLeft":
-                dash_force = (-self.dodge_distance, self.dodge_distance)
+                self.dash_force = [-self.dash_distance / 2, self.dash_distance / 2]
             elif self.direction_move == "Up":
-                dash_force = (0, self.dodge_distance)
+                self.dash_force = [0, self.dash_distance]
 
             elif self.direction_move == "UpRight":
-                dash_force = (self.dodge_distance, self.dodge_distance)
+                self.dash_force = [self.dash_distance / 2, self.dash_distance / 2]
 
             elif self.direction_move == "Right":
-                dash_force = (self.dodge_distance, 0)
+                self.dash_force = [self.dash_distance, 0]
 
             elif self.direction_move == "DownRight":
-                dash_force = (self.dodge_distance, -self.dodge_distance)
+                self.dash_force = [self.dash_distance / 2, -self.dash_distance / 2]
 
             elif self.direction_move == "Down":
-                dash_force = (0, -self.dodge_distance)
+                self.dash_force = [0, -self.dash_distance]
 
             elif self.direction_move == "DownLeft":
-                dash_force = (-self.dodge_distance, -self.dodge_distance)
+                self.dash_force = [-self.dash_distance / 2, -self.dash_distance / 2]
 
-            physics_engine.apply_force(self, dash_force)
+            physics_engine.apply_force(self, self.dash_force)
 
         if self.can_move:
             check_move_key()
             move_camera_to_player()
 
-    def regenerate(self):
+    def update_player(self, physics_engine):
         if self.can_regen_health:
             self.health += DELTA_TIME / 5
         if self.can_regen_mana:
@@ -141,3 +147,18 @@ class Player(arcade.Sprite):
             self.mana = self.max_mana
         if self.stamina > self.max_stamina:
             self.stamina = self.max_stamina
+        
+        if self.dash_duration > 0:
+            dash_increment = (self.dash_duration * self.dash_distance) * 2
+            if self.dash_force[0]:
+                if self.dash_force[0] > 0:
+                    self.dash_force[0] += dash_increment
+                else:
+                    self.dash_force[0] -= dash_increment
+            if self.dash_force[1]:
+                if self.dash_force[1] > 0:
+                    self.dash_force[1] += dash_increment
+                else:
+                    self.dash_force[1] -= dash_increment
+            self.dash_duration -= DELTA_TIME
+            physics_engine.apply_force(self, self.dash_force)
