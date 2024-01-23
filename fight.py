@@ -2,6 +2,8 @@ import arcade
 import time
 
 SLASH_COOLDOWN = 0.3
+SLASH_STAMINA = 5
+
 MOUSE_MARGIN = 40
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -16,7 +18,8 @@ class Slash(arcade.Sprite):
 
 
 def get_slash(player_object, scene, x, y):
-    if len(scene.get_sprite_list("Slash")) == 0:
+    if len(scene.get_sprite_list("Slash")) == 0 and player_object.stamina > 5:
+        player_object.stamina -= 5
         slash = Slash(center_x=player_object.center_x, center_y=player_object.center_y)
         x -= SCREEN_WIDTH / 2
         y -= SCREEN_HEIGHT / 2
@@ -117,5 +120,7 @@ def update(player_object, physics_engine, scene):
                         slash.center_y += -50
                         attack_force = (attack_force_power, -attack_force_power)
                 physics_engine.apply_force(player_object, attack_force)
+            for e in scene.get_sprite_list("NPC"):
+                pass
     else:
         time_slash = time.perf_counter()

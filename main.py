@@ -2,6 +2,7 @@ import arcade
 import player as pl
 import inventory
 import fight
+import NPC as npc
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -52,6 +53,7 @@ class GameView(arcade.View):
 
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite_list("Slash")
+        self.scene.add_sprite_list("NPC")
 
         self.scene.add_sprite("Player", self.playerObject)
 
@@ -65,6 +67,10 @@ class GameView(arcade.View):
         self.physics_engine.add_sprite_list(self.scene.get_sprite_list("collision"),
                                             collision_type="wall",
                                             body_type=arcade.PymunkPhysicsEngine.STATIC)
+        # self.physics_engine.add_sprite_list(self.scene.get_sprite_list("NPC"),
+        #                                     collision_type="NPC")
+
+        self.scene.add_sprite("NPC", npc.NPC("sprites/player/player_base.png", "WRUG", "Straszny Frug", 735, 835))
 
         self.inventoryView = inventory.InventoryView(self.playerObject, self)
 
