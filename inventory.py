@@ -66,37 +66,42 @@ class InventoryView(arcade.View):
         self.scene.add_sprite("Slots", Slot("sprites/inventory/hat.png",
                                             249,
                                             SCREEN_HEIGHT - 60,
-                                            1.5, "hat"))
+                                            1.5, items.Hat))
         x = 150
         for i in range(0, 2):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
                                                 x,
                                                 SCREEN_HEIGHT - 132,
-                                                1, "ring"))
+                                                1, items.Ring))
             x += 195
         del x
         self.scene.add_sprite("Slots", Slot("sprites/inventory/chest.png",
                                             center_x=150,
                                             center_y=SCREEN_HEIGHT - 178,
-                                            scale=1.5))
+                                            scale=1.5,
+                                            type_of_item=items.ChestPlate))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/gloves.png",
                                             center_x=345,
                                             center_y=SCREEN_HEIGHT - 178,
-                                            scale=1.5))
+                                            scale=1.5,
+                                            type_of_item=items.Gloves))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/pants.png",
                                             center_x=150,
                                             center_y=SCREEN_HEIGHT - 230,
-                                            scale=1.5))
+                                            scale=1.5,
+                                            type_of_item=items.Pants))
         self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
                                             center_x=345,
                                             center_y=SCREEN_HEIGHT - 230,
-                                            scale=1.5))
+                                            scale=1.5,
+                                            type_of_item=items.Shoes))
         x = 125
         for i in range(0, 2):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
                                                 center_x=x,
                                                 center_y=SCREEN_HEIGHT - 274,
-                                                scale=1))
+                                                scale=1,
+                                                type_of_item=items.Ring))
             x += 48
         del x
         x = 320
@@ -104,7 +109,8 @@ class InventoryView(arcade.View):
             self.scene.add_sprite("Slots", Slot("sprites/inventory/ring.png",
                                                 center_x=x,
                                                 center_y=SCREEN_HEIGHT - 274,
-                                                scale=1))
+                                                scale=1,
+                                                type_of_item=items.Ring))
             x += 48
         del x
         x = 174
@@ -146,7 +152,7 @@ class InventoryView(arcade.View):
     def add_item(self):
         for s in self.scene.get_sprite_list("Slots"):
             if s.held_item is None:
-                s.held_item = items.Hat("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+                s.held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
                 break
 
     def on_draw(self):
@@ -170,9 +176,6 @@ class InventoryView(arcade.View):
         if arcade.key.A in self.playerObject.keys:
             del self.playerObject.keys[arcade.key.A]
             self.add_item()
-        if arcade.key.E in self.playerObject.keys:
-            del self.playerObject.keys[arcade.key.E]
-            self.equip_item(0, 90)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         if button == 1:
@@ -194,7 +197,7 @@ class InventoryView(arcade.View):
                 if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
                     try:
                         if s.held_item is None:
-                            if s.type_of_item == self.hold_item.name or s.type_of_item is None:
+                            if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
                                 s.held_item = self.hold_item
                                 self.hold_item_slot.held_item = None
                                 break
