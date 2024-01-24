@@ -206,7 +206,6 @@ class InventoryView(arcade.View):
                                 tmp = s.held_item
                                 s.held_item = self.hold_item
                                 self.hold_item_slot.held_item = tmp
-
                     except:
                         self.hold_item_slot_last = self.hold_item
 

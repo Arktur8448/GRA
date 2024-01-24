@@ -22,6 +22,30 @@ class Player(arcade.Sprite):
         self.keys = {}
         self.direction_move = "Down"
         self.can_move = True
+        self.ifIdle = True
+
+        self.cur_texture = 1
+        self.time_counter = 0
+        self.animation_time_interval = 1
+        self.move_animation_time_interval = 0.3
+        self.sprint_animation_time_interval = 0.2
+        self.animation_count = 2
+        self.idle_up = arcade.load_texture("sprites/player/Idle_Up.png")
+        self.idle_down = arcade.load_texture("sprites/player/Idle_Down.png")
+        self.idle_left = arcade.load_texture("sprites/player/Idle_Left.png")
+        self.idle_right = arcade.load_texture("sprites/player/Idle_Right.png")
+        self.move_up = []
+        for i in range(1, self.animation_count + 1):
+            self.move_up.append(arcade.load_texture(f"sprites/player/Walk_Up_{i}.png"))
+        self.move_down = []
+        for i in range(1, self.animation_count + 1):
+            self.move_down.append(arcade.load_texture(f"sprites/player/Walk_Down_{i}.png"))
+        self.move_left = []
+        for i in range(1, self.animation_count + 1):
+            self.move_left.append(arcade.load_texture(f"sprites/player/Walk_Left_{i}.png"))
+        self.move_right = []
+        for i in range(1, self.animation_count + 1):
+            self.move_right.append(arcade.load_texture(f"sprites/player/Walk_Right_{i}.png"))
 
         self.level = 1  # base staty
         self.exp = 0
@@ -49,9 +73,14 @@ class Player(arcade.Sprite):
     def movement(self, camera, camer_speed, width, height, physics_engine):
         """Pełny Ruch Gracza"""
         def check_move_key():  # aktualizacja pozycji w zależności od naciśniętych klawiszy
+            if arcade.key.W in self.keys or arcade.key.A in self.keys or arcade.key.S in self.keys or arcade.key.D in self.keys:
+                self.ifIdle = False
+            else:
+                self.ifIdle = True
             if arcade.key.LSHIFT in self.keys and self.stamina > 0:
                 self.can_regen_stamina = False
                 speed = self.sprint_speed
+                self.animation_time_interval = self.sprint_animation_time_interval
                 if arcade.key.W in self.keys or arcade.key.A in self.keys or arcade.key.S in self.keys or arcade.key.D in self.keys:
                     self.stamina -= 1/10
                     if self.stamina < 1:
@@ -59,6 +88,7 @@ class Player(arcade.Sprite):
             else:
                 speed = self.movement_speed
                 self.can_regen_stamina = True
+                self.animation_time_interval = self.move_animation_time_interval
 
             if arcade.key.W in self.keys:
                 physics_engine.apply_force(self, (0, speed))
@@ -162,3 +192,49 @@ class Player(arcade.Sprite):
                     self.dash_force[1] -= dash_increment
             self.dash_duration -= DELTA_TIME
             physics_engine.apply_force(self, self.dash_force)
+
+    def update_animation(self, delta_time: float = 1 / 60):
+        self.time_counter += delta_time
+        print(self.cur_texture + 1)
+        if self.ifIdle:
+            self.cur_texture = 0
+            match self.direction_move:
+                case "Down":
+                    self.texture = self.idle_down
+                case "Up":
+                    self.texture = self.idle_up
+                case "Left":
+                    self.texture = self.idle_left
+                case "Right":
+                    self.texture = self.idle_right
+                case "UpLeft":
+                    self.texture = self.idle_up
+                case "UpRight":
+                    self.texture = self.idle_up
+                case "DownLeft":
+                    self.texture = self.idle_down
+                case "DownRight":
+                    self.texture = self.idle_down
+        else:
+            if self.time_counter >= self.animation_time_interval:
+                self.cur_texture += 1
+                self.time_counter = 0
+            if self.cur_texture > self.animation_count - 1:
+                self.cur_texture = 0
+            match self.direction_move:
+                case "Down":
+                    self.texture = self.move_down[self.cur_texture]
+                case "Up":
+                    self.texture = self.move_up[self.cur_texture]
+                case "Left":
+                    self.texture = self.move_left[self.cur_texture]
+                case "Right":
+                    self.texture = self.move_right[self.cur_texture]
+                case "UpLeft":
+                    self.texture = self.move_up[self.cur_texture]
+                case "UpRight":
+                    self.texture = self.move_up[self.cur_texture]
+                case "DownLeft":
+                    self.texture = self.move_down[self.cur_texture]
+                case "DownRight":
+                    self.texture = self.move_down[self.cur_texture]

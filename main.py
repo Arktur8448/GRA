@@ -56,7 +56,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Player", self.playerObject)
 
         self.scene.add_sprite_list("NPC")
-        self.scene.add_sprite("NPC", npc.NPC("sprites/player/player_base.png", "WRUG", "Straszny Frug", 735, 835, health=30))
+        self.scene.add_sprite("NPC", npc.NPC("sprites/player/player_start.png", "WRUG", "Straszny Frug", 735, 835, health=30))
 
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=0)
@@ -128,6 +128,9 @@ class GameView(arcade.View):
         self.playerObject.movement(self.camera, CAMERA_SPEED, SCREEN_WIDTH, SCREEN_HEIGHT, self.physics_engine)
         self.playerObject.update_player(self.physics_engine)
         fight.update(self.playerObject, self.physics_engine, self.scene)
+
+        self.scene.update_animation(delta_time, ["Player"])
+
         if arcade.key.I in self.playerObject.keys:
             self.window.show_view(self.inventoryView)
             del self.playerObject.keys[arcade.key.I]
