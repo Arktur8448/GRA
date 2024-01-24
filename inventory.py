@@ -143,8 +143,11 @@ class InventoryView(arcade.View):
     def delete_item(self, slot_index):
         self.scene.get_sprite_list("Slots")[slot_index].held_item = None
 
-    def add_item(self, slot_index):
-        self.scene.get_sprite_list("Slots")[slot_index].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+    def add_item(self):
+        for s in self.scene.get_sprite_list("Slots"):
+            if s.held_item is None:
+                s.held_item = items.Hat("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+                break
 
     def on_draw(self):
         self.clear()
@@ -166,7 +169,7 @@ class InventoryView(arcade.View):
             self.delete_item(0)
         if arcade.key.A in self.playerObject.keys:
             del self.playerObject.keys[arcade.key.A]
-            self.add_item(3)
+            self.add_item()
         if arcade.key.E in self.playerObject.keys:
             del self.playerObject.keys[arcade.key.E]
             self.equip_item(0, 90)
@@ -178,6 +181,7 @@ class InventoryView(arcade.View):
                     self.hold_item = s.held_item
                     self.hold_item_slot = s
                     self.hold_item_slot.can_show_item = False
+                    self.hold_item_slot_last = s.held_item
 
     def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
                       _buttons: int, _modifiers: int):
@@ -194,6 +198,12 @@ class InventoryView(arcade.View):
                                 s.held_item = self.hold_item
                                 self.hold_item_slot.held_item = None
                                 break
+                        else:
+                            if s.type_of_item == self.hold_item.name or s.type_of_item is None:
+                                tmp = s.held_item
+                                s.held_item = self.hold_item
+                                self.hold_item_slot.held_item = tmp
+
                     except:
                         self.hold_item_slot_last = self.hold_item
 
