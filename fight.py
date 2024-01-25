@@ -1,5 +1,6 @@
 import arcade
 import time
+import  math
 
 SLASH_COOLDOWN = 0.3
 SLASH_STAMINA = 5
@@ -31,41 +32,37 @@ def get_slash(player_object, scene, x, y):
                 slash.center_y += 60
             else:
                 slash.direction = "Down"
-                slash.turn_right(180)
                 slash.center_x += 0
                 slash.center_y += -55
         elif -MOUSE_MARGIN < y < MOUSE_MARGIN:
             if x > 0:
                 slash.direction = "Right"
-                slash.turn_right(90)
                 slash.center_x += 50
                 slash.center_y += 0
             else:
                 slash.direction = "Left"
-                slash.turn_left(90)
                 slash.center_x += -50
                 slash.center_y += 0
         else:
             if x > MOUSE_MARGIN and y > MOUSE_MARGIN:
                 slash.direction = "UpRight"
-                slash.turn_right(45)
                 slash.center_x += 25
                 slash.center_y += 50
             elif x < MOUSE_MARGIN < y:
                 slash.direction = "UpLeft"
-                slash.turn_left(45)
                 slash.center_x += -25
                 slash.center_y += 50
             elif x > MOUSE_MARGIN > y:
                 slash.direction = "DownRight"
-                slash.turn_right(135)
                 slash.center_x += 25
                 slash.center_y += -50
             elif x < MOUSE_MARGIN and y < MOUSE_MARGIN:
                 slash.direction = "DownLeft"
-                slash.turn_left(135)
                 slash.center_x += -25
                 slash.center_y += -50
+        radian = math.atan2(x, y)
+        degree = math.degrees(radian)
+        slash.turn_right(degree)
 
         scene.add_sprite("Slash", slash)
         for e in scene.get_sprite_list("NPC"):
@@ -85,9 +82,12 @@ def update(player_object, physics_engine, scene):
             for s in scene.get_sprite_list("Slash"):
                 s.kill()
                 player_object.can_move = True
+                player_object.ifAttack = False
         else:
-            player_object.can_move = False
             for slash in scene.get_sprite_list("Slash"):
+                player_object.can_move = False
+                player_object.ifAttack = True
+                player_object.direction_attack = slash.direction
                 slash.center_x = player_object.center_x
                 slash.center_y = player_object.center_y
                 attack_force = (0, 0)

@@ -56,7 +56,7 @@ class GameView(arcade.View):
         self.scene.add_sprite("Player", self.playerObject)
 
         self.scene.add_sprite_list("NPC")
-        self.scene.add_sprite("NPC", npc.NPC("sprites/player/player_start.png", "WRUG", "Straszny Frug", 735, 835, health=30))
+        self.scene.add_sprite("NPC", npc.NPC("sprites/player/player_start.png", "WRUG", "Straszny Frug", 735, 835, health=150))
 
         # Utworzenie silnkia fizyki nakładającego kolizje na Walls
         self.physics_engine = arcade.PymunkPhysicsEngine(damping=0)

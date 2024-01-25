@@ -20,9 +20,13 @@ class Player(arcade.Sprite):
         self.dash_last_time = time.perf_counter() - self.dash_cooldown
 
         self.keys = {}
+
         self.direction_move = "Down"
+        self.direction_attack = "Down"
         self.can_move = True
+        self.moving = False
         self.ifIdle = True
+        self.ifAttack = False
 
         self.cur_texture = 1
         self.time_counter = 0
@@ -59,8 +63,8 @@ class Player(arcade.Sprite):
         self.max_mana = 30
         self.can_regen_mana = True
 
-        self.stamina = 30
-        self.max_stamina = 30
+        self.stamina = 300
+        self.max_stamina = 300
         self.can_regen_stamina = True
 
         self.strength = 10
@@ -74,9 +78,9 @@ class Player(arcade.Sprite):
         """Pełny Ruch Gracza"""
         def check_move_key():  # aktualizacja pozycji w zależności od naciśniętych klawiszy
             if arcade.key.W in self.keys or arcade.key.A in self.keys or arcade.key.S in self.keys or arcade.key.D in self.keys:
-                self.ifIdle = False
+                self.moving = True
             else:
-                self.ifIdle = True
+                self.moving = False
             if arcade.key.LSHIFT in self.keys and self.stamina > 0:
                 self.can_regen_stamina = False
                 speed = self.sprint_speed
@@ -177,7 +181,7 @@ class Player(arcade.Sprite):
             self.mana = self.max_mana
         if self.stamina > self.max_stamina:
             self.stamina = self.max_stamina
-        
+
         if self.dash_duration > 0:
             dash_increment = (self.dash_duration * self.dash_distance) * 2
             if self.dash_force[0]:
@@ -195,27 +199,27 @@ class Player(arcade.Sprite):
 
     def update_animation(self, delta_time: float = 1 / 60):
         self.time_counter += delta_time
-        print(self.cur_texture + 1)
-        if self.ifIdle:
+        if self.ifAttack:
             self.cur_texture = 0
-            match self.direction_move:
+            match self.direction_attack:
                 case "Down":
-                    self.texture = self.idle_down
+                    self.texture = self.move_down[0]
                 case "Up":
-                    self.texture = self.idle_up
+                    self.texture = self.move_up[0]
                 case "Left":
-                    self.texture = self.idle_left
+                    self.texture = self.move_left[0]
                 case "Right":
-                    self.texture = self.idle_right
+                    self.texture = self.move_right[0]
                 case "UpLeft":
-                    self.texture = self.idle_up
+                    self.texture = self.move_up[0]
                 case "UpRight":
-                    self.texture = self.idle_up
+                    self.texture = self.move_up[1]
                 case "DownLeft":
-                    self.texture = self.idle_down
+                    self.texture = self.move_down[0]
                 case "DownRight":
-                    self.texture = self.idle_down
-        else:
+                    self.texture = self.move_down[1]
+            self.direction_move = self.direction_attack
+        elif self.moving:
             if self.time_counter >= self.animation_time_interval:
                 self.cur_texture += 1
                 self.time_counter = 0
@@ -238,3 +242,22 @@ class Player(arcade.Sprite):
                     self.texture = self.move_down[self.cur_texture]
                 case "DownRight":
                     self.texture = self.move_down[self.cur_texture]
+        else:
+            self.cur_texture = 0
+            match self.direction_move:
+                case "Down":
+                    self.texture = self.idle_down
+                case "Up":
+                    self.texture = self.idle_up
+                case "Left":
+                    self.texture = self.idle_left
+                case "Right":
+                    self.texture = self.idle_right
+                case "UpLeft":
+                    self.texture = self.idle_up
+                case "UpRight":
+                    self.texture = self.idle_up
+                case "DownLeft":
+                    self.texture = self.idle_down
+                case "DownRight":
+                    self.texture = self.idle_down
