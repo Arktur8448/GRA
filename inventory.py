@@ -54,12 +54,12 @@ class InventoryView(arcade.View):
         self.scene.add_sprite_list("Player")
         for r in range(1, self.row_count + 1):
             for c in range(1, self.coulum_count + 1):
-                self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+                self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
                                                     SCREEN_WIDTH / 2 + 50 * c,
                                                     SCREEN_HEIGHT - 25 - 50 * r,
                                                     1.5))
 
-        self.scene.add_sprite("Player", Slot("sprites/player/player_base.png",
+        self.scene.add_sprite("Player", Slot("sprites/player/Idle_Down.png",
                                              250,
                                              SCREEN_HEIGHT / 1.5,
                                              5))
@@ -90,7 +90,7 @@ class InventoryView(arcade.View):
                                             center_y=SCREEN_HEIGHT - 230,
                                             scale=1.5,
                                             type_of_item=items.Pants))
-        self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+        self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
                                             center_x=345,
                                             center_y=SCREEN_HEIGHT - 230,
                                             scale=1.5,
@@ -115,7 +115,7 @@ class InventoryView(arcade.View):
         del x
         x = 174
         for i in range(0, 4):
-            self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/weapon.png",
                                                 center_x=x,
                                                 center_y=SCREEN_HEIGHT - 322,
                                                 scale=1.5))
@@ -123,7 +123,7 @@ class InventoryView(arcade.View):
         del x
         x = 122
         for i in range(0, 6):
-            self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/potions.png",
                                                 center_x=x,
                                                 center_y=SCREEN_HEIGHT - 390,
                                                 scale=1.5))
@@ -131,7 +131,7 @@ class InventoryView(arcade.View):
         del x
         x = 197
         for i in range(0, 3):
-            self.scene.add_sprite("Slots", Slot("sprites/inventory/Slot.png",
+            self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
                                                 center_x=x,
                                                 center_y=SCREEN_HEIGHT - 440,
                                                 scale=1.5))
