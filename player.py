@@ -74,6 +74,8 @@ class Player(arcade.Sprite):
         self.race = None
         self.weapon = None
 
+        self.gold = 0
+
     def movement(self, camera, camer_speed, width, height, physics_engine):
         """Pełny Ruch Gracza"""
         def check_move_key():  # aktualizacja pozycji w zależności od naciśniętych klawiszy
