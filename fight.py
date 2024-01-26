@@ -1,6 +1,6 @@
 import arcade
 import time
-import  math
+import math
 
 SLASH_COOLDOWN = 0.3
 SLASH_STAMINA = 5

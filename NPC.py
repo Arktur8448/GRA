@@ -28,6 +28,17 @@ class NPC (arcade.Sprite):
         else:
             return False
 
+    def show_health(self):
+        hp = arcade.Text(
+            f"HP: {int(self.health)}/{self.max_health}",
+            self.center_x - 60,
+            self.center_y + 40,
+            arcade.color.RED,
+            15,
+            font_name="Kenney Blocks",
+        )
+        return hp
+
 # class Mage(NPC):
 #     pass
 #     def use_spell(self, player):

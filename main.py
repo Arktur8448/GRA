@@ -89,6 +89,10 @@ class GameView(arcade.View):
 
         self.camera.use()
 
+        for n in self.scene.get_sprite_list("NPC"):
+            bar = n.show_health()
+            bar.draw()
+
         self.draw_gui()
 
     def draw_gui(self):
