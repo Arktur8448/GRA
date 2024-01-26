@@ -2,6 +2,7 @@ import arcade
 import items
 import time
 import player
+import copy
 
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -45,6 +46,8 @@ class InventoryView(arcade.View):
         self.hold_item_slot = None
 
         self.hold_item_slot_last = None
+
+        self.playerObjectCopy = copy.deepcopy(self.playerObject)
 
     def on_show_view(self):
         arcade.set_background_color((42, 42, 42))
@@ -155,11 +158,15 @@ class InventoryView(arcade.View):
                 s.held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
                 break
 
-    def is_equipped(self, s):
-        for sl in range(90, 91):
-            if s is self.scene.get_sprite_list("Slots")[sl]:
-                self.playerObject.defence += s.held_item.defence
-                return True
+    def check_equipped(self):
+        print(self.playerObject.defence)
+        self.playerObject.defence = self.playerObjectCopy.defence
+        od = 90
+        do = 101
+        for s in self.scene.get_sprite_list("Slots")[od:do]:
+            if s.held_item is not None:
+                if type(s.held_item) is items.Hat or type(s.held_item) is items.ChestPlate or type(s.held_item) is items.Pants or type(s.held_item) is items.Shoes:
+                    self.playerObject.defence = self.playerObjectCopy.defence + s.held_item.defence
 
     def on_draw(self):
         self.clear()
@@ -173,15 +180,7 @@ class InventoryView(arcade.View):
             del self.playerObject.keys[arcade.key.I]
             self.gameView.camera.use()
             self.window.show_view(self.gameView)
-        if arcade.key.X in self.playerObject.keys:
-            del self.playerObject.keys[arcade.key.X]
-            self.move_item(0, 1)
-        if arcade.key.D in self.playerObject.keys:
-            del self.playerObject.keys[arcade.key.D]
-            self.delete_item(0)
-        if arcade.key.A in self.playerObject.keys:
-            del self.playerObject.keys[arcade.key.A]
-            self.add_item()
+        self.check_equipped()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         if button == 1:
@@ -206,7 +205,6 @@ class InventoryView(arcade.View):
                             if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
                                 s.held_item = self.hold_item
                                 self.hold_item_slot.held_item = None
-                                self.is_equipped(s)
                                 break
                         else:
                             if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
