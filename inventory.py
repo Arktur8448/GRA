@@ -142,6 +142,15 @@ class InventoryView(arcade.View):
         del x
 
         self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
+        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
@@ -166,7 +175,14 @@ class InventoryView(arcade.View):
         for s in self.scene.get_sprite_list("Slots")[od:do]:
             if s.held_item is not None:
                 if type(s.held_item) is items.Hat or type(s.held_item) is items.ChestPlate or type(s.held_item) is items.Pants or type(s.held_item) is items.Shoes:
-                    self.playerObject.defence = self.playerObjectCopy.defence + s.held_item.defence
+                    self.playerObject.defence += s.held_item.defence
+                elif type(s.held_item) is items.Ring or type(s.held_item) is items.Amulet or type(s.held_item) is items.Necklace:
+                    self.playerObject.health += s.held_item.extra_health
+                    self.playerObject.mana += s.held_item.extra_mana
+                    # self.playerObject.damage = self.playerObjectCopy.damage + s.held_item.extra_damage
+                    self.playerObject.defence += s.held_item.extra_defence
+                    self.playerObject.stamina += s.held_item.extra_stamina
+                    self.playerObject.strength += s.held_item.extra_strength
 
     def on_draw(self):
         self.clear()
@@ -223,3 +239,285 @@ class InventoryView(arcade.View):
                     self.hold_item_slot_last = self.hold_item_slot
                 self.hold_item_slot = None
 
+
+class BlackSmithView(arcade.View):
+    def __init__(self, player_object, game_view):
+        super().__init__()
+        self.playerObject = player_object
+        self.gameView = game_view
+        self.scene = None
+
+        self.camera = None
+
+        self.row_count = 10
+        self.coulum_count = 9
+
+        self.hold_item = None
+        self.hold_item_slot = None
+
+        self.hold_item_slot_last = None
+
+        self.playerObjectCopy = copy.deepcopy(self.playerObject)
+        self.page = 2
+
+    def on_show_view(self):
+        arcade.set_background_color((42, 42, 42))
+        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.scene = arcade.Scene()
+        self.scene.add_sprite_list("Slots")
+        self.scene.add_sprite_list("Blacksmith1")
+        self.scene.add_sprite_list("Blacksmith2")
+        self.scene.add_sprite_list("Blacksmith3")
+        for r in range(1, self.row_count + 1):
+            for c in range(1, self.coulum_count + 1):
+                self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
+                                                    SCREEN_WIDTH / 2 + 50 * c,
+                                                    SCREEN_HEIGHT - 25 - 50 * r,
+                                                    1.5))
+        # page 1
+        self.scene.add_sprite("Blacksmith1", Slot("sprites/inventory/weapon.png",
+                                                  100,
+                                                  264,
+                                                  1.5))
+        self.scene.add_sprite("Blacksmith1", Slot("sprites/inventory/weapon.png",
+                                                  200,
+                                                  264,
+                                                  1.5))
+        self.scene.add_sprite("Blacksmith1", Slot("sprites/inventory/weapon.png",
+                                                  300,
+                                                  264,
+                                                  2))
+        # page 2
+        self.scene.add_sprite("Blacksmith2", Slot("sprites/inventory/weapon.png",
+                                                  150,
+                                                  264,
+                                                  1.5))
+        self.scene.add_sprite("Blacksmith2", Slot("sprites/inventory/weapon.png",
+                                                  250,
+                                                  264,
+                                                  2))
+        # page 3
+        for r in range(1, 9):
+            for c in range(1, 10):
+                self.scene.add_sprite("Blacksmith3", Slot("sprites/inventory/slot.png",
+                                                    50 * c,
+                                                    50 * r + 47,
+                                                    1.5))
+
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
+        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+
+    def move_item(self, form_slot_index, to_slot_index):
+        tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
+        self.scene.get_sprite_list("Slots")[to_slot_index].held_item = self.scene.get_sprite_list("Slots")[
+            form_slot_index].held_item
+        self.scene.get_sprite_list("Slots")[form_slot_index].held_item = tmp
+
+    def delete_item(self, slot_index):
+        self.scene.get_sprite_list("Slots")[slot_index].held_item = None
+
+    def add_item(self):
+        for s in self.scene.get_sprite_list("Slots"):
+            if s.held_item is None:
+                s.held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+                break
+
+    def on_draw(self):
+        self.clear()
+        self.camera.use()
+        tab = ["Slots"]
+        if self.page == 1:
+            tab.append("Blacksmith1")
+        if self.page == 2:
+            tab.append("Blacksmith2")
+        if self.page == 3:
+            tab.append("Blacksmith3")
+        self.scene.draw(names=tab, pixelated=True)
+        for s in self.scene.get_sprite_list("Slots"):
+            s.show_item()
+
+    def on_update(self, delta_time):
+        if arcade.key.I in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.I]
+            self.gameView.camera.use()
+            self.window.show_view(self.gameView)
+
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        if button == 1:
+            for s in self.scene.get_sprite_list("Slots"):
+                if s.collides_with_point((x, y)):
+                    self.hold_item = s.held_item
+                    self.hold_item_slot = s
+                    self.hold_item_slot.can_show_item = False
+                    self.hold_item_slot_last = s.held_item
+
+    def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
+                      _buttons: int, _modifiers: int):
+        if self.hold_item:
+            self.hold_item.position = x, y
+
+    def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
+        if button == 1:
+            for s in self.scene.get_sprite_list("Slots"):
+                if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
+                    try:
+                        if s.held_item is None:
+                            if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
+                                s.held_item = self.hold_item
+                                self.hold_item_slot.held_item = None
+                                break
+                        else:
+                            if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
+                                tmp = s.held_item
+                                s.held_item = self.hold_item
+                                self.hold_item_slot.held_item = tmp
+                                break
+                    except:
+                        self.hold_item_slot_last = self.hold_item
+
+            if self.hold_item:
+                self.hold_item = None
+                self.hold_item_slot.can_show_item = True
+                if self.hold_item_slot is not None:
+                    self.hold_item_slot_last = self.hold_item_slot
+                self.hold_item_slot = None
+
+class ShopView(arcade.View):
+    def __init__(self, player_object, game_view):
+        super().__init__()
+        self.playerObject = player_object
+        self.gameView = game_view
+        self.scene = None
+
+        self.camera = None
+
+        self.row_count = 10
+        self.coulum_count = 9
+
+        self.hold_item = None
+        self.hold_item_slot = None
+
+        self.hold_item_slot_last = None
+
+        self.playerObjectCopy = copy.deepcopy(self.playerObject)
+        self.page = 1
+
+    def on_show_view(self):
+        arcade.set_background_color((42, 42, 42))
+        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.scene = arcade.Scene()
+        self.scene.add_sprite_list("Slots")
+        self.scene.add_sprite_list("Shop1")
+        self.scene.add_sprite_list("Shop2")
+        for r in range(1, self.row_count + 1):
+            for c in range(1, self.coulum_count + 1):
+                self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
+                                                    SCREEN_WIDTH / 2 + 50 * c,
+                                                    SCREEN_HEIGHT - 25 - 50 * r,
+                                                    1.5))
+        # page 1
+        for r in range(1, 9):
+            for c in range(1, 10):
+                self.scene.add_sprite("Shop1", Slot("sprites/inventory/slot.png",
+                                                    50 * c,
+                                                    50 * r + 47,
+                                                    1.5))
+        # page 1
+        for r in range(1, 9):
+            for c in range(1, 10):
+                self.scene.add_sprite("Shop2", Slot("sprites/inventory/slot.png",
+                                                    50 * c,
+                                                    50 * r + 47,
+                                                    1.5))
+
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
+        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+
+    def move_item(self, form_slot_index, to_slot_index):
+        tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
+        self.scene.get_sprite_list("Slots")[to_slot_index].held_item = self.scene.get_sprite_list("Slots")[
+            form_slot_index].held_item
+        self.scene.get_sprite_list("Slots")[form_slot_index].held_item = tmp
+
+    def delete_item(self, slot_index):
+        self.scene.get_sprite_list("Slots")[slot_index].held_item = None
+
+    def add_item(self):
+        for s in self.scene.get_sprite_list("Slots"):
+            if s.held_item is None:
+                s.held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+                break
+
+    def on_draw(self):
+        self.clear()
+        self.camera.use()
+        tab = ["Slots"]
+        if self.page == 1:
+            tab.append("Shop1")
+        if self.page == 2:
+            tab.append("Shop2")
+        self.scene.draw(names=tab, pixelated=True)
+        for s in self.scene.get_sprite_list("Slots"):
+            s.show_item()
+
+    def on_update(self, delta_time):
+        if arcade.key.I in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.I]
+            self.gameView.camera.use()
+            self.window.show_view(self.gameView)
+
+    def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        if button == 1:
+            for s in self.scene.get_sprite_list("Slots"):
+                if s.collides_with_point((x, y)):
+                    self.hold_item = s.held_item
+                    self.hold_item_slot = s
+                    self.hold_item_slot.can_show_item = False
+                    self.hold_item_slot_last = s.held_item
+
+    def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
+                      _buttons: int, _modifiers: int):
+        if self.hold_item:
+            self.hold_item.position = x, y
+
+    def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
+        if button == 1:
+            for s in self.scene.get_sprite_list("Slots"):
+                if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
+                    try:
+                        if s.held_item is None:
+                            if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
+                                s.held_item = self.hold_item
+                                self.hold_item_slot.held_item = None
+                                break
+                        else:
+                            if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
+                                tmp = s.held_item
+                                s.held_item = self.hold_item
+                                self.hold_item_slot.held_item = tmp
+                                break
+                    except:
+                        self.hold_item_slot_last = self.hold_item
+
+            if self.hold_item:
+                self.hold_item = None
+                self.hold_item_slot.can_show_item = True
+                if self.hold_item_slot is not None:
+                    self.hold_item_slot_last = self.hold_item_slot
+                self.hold_item_slot = None

@@ -72,7 +72,7 @@ class GameView(arcade.View):
                                             collision_type="NPC",
                                             moment_of_intertia=1000000)
 
-        self.inventoryView = inventory.InventoryView(self.playerObject, self)
+        self.inventoryView = inventory.ShopView(self.playerObject, self)
 
     def on_show_view(self):
         arcade.set_background_color((231, 255, 80))
