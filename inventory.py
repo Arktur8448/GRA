@@ -155,6 +155,12 @@ class InventoryView(arcade.View):
                 s.held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
                 break
 
+    def is_equipped(self, s):
+        for sl in range(90, 91):
+            if s is self.scene.get_sprite_list("Slots")[sl]:
+                self.playerObject.defence += s.held_item.defence
+                return True
+
     def on_draw(self):
         self.clear()
         self.camera.use()
@@ -200,12 +206,15 @@ class InventoryView(arcade.View):
                             if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
                                 s.held_item = self.hold_item
                                 self.hold_item_slot.held_item = None
+                                self.is_equipped(s)
                                 break
                         else:
-                            if s.type_of_item == self.hold_item.name or s.type_of_item is None:
+                            if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
                                 tmp = s.held_item
                                 s.held_item = self.hold_item
                                 self.hold_item_slot.held_item = tmp
+                                self.is_equipped(s)
+                                break
                     except:
                         self.hold_item_slot_last = self.hold_item
 
