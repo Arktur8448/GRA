@@ -74,7 +74,7 @@ class Player(arcade.Sprite):
         self.race = None
         self.weapon = None
 
-        self.gold = 0
+        self.gold = 10
 
     def movement(self, camera, camer_speed, width, height, physics_engine):
         """Pełny Ruch Gracza"""
