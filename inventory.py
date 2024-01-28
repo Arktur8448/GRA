@@ -143,24 +143,24 @@ class InventoryView(arcade.View):
             x += 52
         del x
 
-        # self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat",
-        #                                                              0, 0, 0, 0,
-        #                                                              10)
-        # self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good",
-        #                                                                     "hat", "hat",
-        #                                                                     0, 0, 0, 0, 10)
-        # self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat",
-        #                                                                "hat",
-        #                                                                0, 0, 0, 0, 10)
-        # self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat",
-        #                                                                 "hat",
-        #                                                                 0, 0, 0, 0, 10)
-        # self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat",
-        #                                                                "hat",
-        #                                                                0, 0, 0, 0, 10)
-        # self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat",
-        #                                                               "Common", 0, 0, 0, 0, 10)
         self.load_inventory()
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0,
+                                                                     10)  # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
+        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good",
+                                                                            "hat", "hat",
+                                                                            0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat",
+                                                                       "hat",
+                                                                       0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat",
+                                                                        "hat",
+                                                                        0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat",
+                                                                       "hat",
+                                                                       0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat",
+                                                                      "Common", 0, 0, 0, 0, 10)
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
@@ -176,7 +176,6 @@ class InventoryView(arcade.View):
         for i in range(0, len(self.playerInventory)):
             if self.playerInventory[i] is None:
                 self.playerInventory[i] = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
-                print("kutas")
                 self.load_inventory()
                 break
 
@@ -196,9 +195,11 @@ class InventoryView(arcade.View):
         do = 101
         for s in self.scene.get_sprite_list("Slots")[od:do]:
             if s.held_item is not None:
-                if type(s.held_item) is items.Hat or type(s.held_item) is items.ChestPlate or type(s.held_item) is items.Pants or type(s.held_item) is items.Shoes:
+                if type(s.held_item) is items.Hat or type(s.held_item) is items.ChestPlate or type(
+                        s.held_item) is items.Pants or type(s.held_item) is items.Shoes:
                     self.playerObject.defence += s.held_item.defence
-                elif type(s.held_item) is items.Ring or type(s.held_item) is items.Amulet or type(s.held_item) is items.Necklace:
+                elif type(s.held_item) is items.Ring or type(s.held_item) is items.Amulet or type(
+                        s.held_item) is items.Necklace:
                     self.playerObject.health += s.held_item.extra_health
                     self.playerObject.mana += s.held_item.extra_mana
                     # self.playerObject.damage = self.playerObjectCopy.damage + s.held_item.extra_damage
@@ -330,20 +331,27 @@ class BlackSmithView(arcade.View):
         for r in range(1, 9):
             for c in range(1, 10):
                 self.scene.add_sprite("Blacksmith3", Slot("sprites/inventory/slot.png",
-                                                    50 * c,
-                                                    50 * r + 47,
-                                                    1.5))
+                                                          50 * c,
+                                                          50 * r + 47,
+                                                          1.5))
 
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
-        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0,
+                                                                     10)  # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
+        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good",
+                                                                            "hat", "hat",
+                                                                            0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat",
+                                                                       "hat",
+                                                                       0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat",
+                                                                        "hat",
+                                                                        0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat",
+                                                                       "hat",
+                                                                       0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat",
+                                                                      "Common", 0, 0, 0, 0, 10)
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
@@ -420,6 +428,7 @@ class BlackSmithView(arcade.View):
                     self.hold_item_slot_last = self.hold_item_slot
                 self.hold_item_slot = None
 
+
 class ShopView(arcade.View):
     def __init__(self, player_object, game_view):
         super().__init__()
@@ -468,16 +477,23 @@ class ShopView(arcade.View):
                                                     50 * r + 47,
                                                     1.5))
 
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
-        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat",
+                                                                     0, 0, 0, 0,
+                                                                     10)  # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
+        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good",
+                                                                            "hat", "hat",
+                                                                            0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat",
+                                                                       "hat",
+                                                                       0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat",
+                                                                        "hat",
+                                                                        0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat",
+                                                                       "hat",
+                                                                       0, 0, 0, 0, 10)
+        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat",
+                                                                      "Common", 0, 0, 0, 0, 10)
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
