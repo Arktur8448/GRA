@@ -144,23 +144,6 @@ class InventoryView(arcade.View):
         del x
 
         self.load_inventory()
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0,
-                                                                     10)  # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
-        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good",
-                                                                            "hat", "hat",
-                                                                            0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat",
-                                                                       "hat",
-                                                                       0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat",
-                                                                        "hat",
-                                                                        0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat",
-                                                                       "hat",
-                                                                       0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat",
-                                                                      "Common", 0, 0, 0, 0, 10)
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
