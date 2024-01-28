@@ -48,6 +48,8 @@ class InventoryView(arcade.View):
         self.hold_item_slot_last = None
 
         self.playerObjectCopy = copy.deepcopy(self.playerObject)
+        self.playerInventory = [None] * 150
+        self.check_once = 0
 
     def on_show_view(self):
         arcade.set_background_color((42, 42, 42))
@@ -141,16 +143,24 @@ class InventoryView(arcade.View):
             x += 52
         del x
 
-        self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat", 0, 0, 0, 0, 10) # name narazie używam do funkcji equip_item ale to tylko chwilowo, jest do zmienienia
-        self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat", "hat",
-                                                                     0, 0, 0, 0, 10)
-        self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+        # self.scene.get_sprite_list("Slots")[0].held_item = items.Hat("sprites/inventory/hat.png", "good", "hat", "hat",
+        #                                                              0, 0, 0, 0,
+        #                                                              10)
+        # self.scene.get_sprite_list("Slots")[1].held_item = items.ChestPlate("sprites/inventory/chest.png", "good",
+        #                                                                     "hat", "hat",
+        #                                                                     0, 0, 0, 0, 10)
+        # self.scene.get_sprite_list("Slots")[2].held_item = items.Pants("sprites/inventory/pants.png", "good", "hat",
+        #                                                                "hat",
+        #                                                                0, 0, 0, 0, 10)
+        # self.scene.get_sprite_list("Slots")[3].held_item = items.Gloves("sprites/inventory/gloves.png", "good", "hat",
+        #                                                                 "hat",
+        #                                                                 0, 0, 0, 0, 10)
+        # self.scene.get_sprite_list("Slots")[4].held_item = items.Shoes("sprites/inventory/Slot.png", "good", "hat",
+        #                                                                "hat",
+        #                                                                0, 0, 0, 0, 10)
+        # self.scene.get_sprite_list("Slots")[5].held_item = items.Ring("sprites/inventory/ring.png", "good", "hat",
+        #                                                               "Common", 0, 0, 0, 0, 10)
+        self.load_inventory()
 
     def move_item(self, form_slot_index, to_slot_index):
         tmp = self.scene.get_sprite_list("Slots")[to_slot_index].held_item
@@ -162,13 +172,25 @@ class InventoryView(arcade.View):
         self.scene.get_sprite_list("Slots")[slot_index].held_item = None
 
     def add_item(self):
-        for s in self.scene.get_sprite_list("Slots"):
-            if s.held_item is None:
-                s.held_item = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+        # self.playerInventory.append(items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10))
+        for i in range(0, len(self.playerInventory)):
+            if self.playerInventory[i] is None:
+                self.playerInventory[i] = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10)
+                print("kutas")
+                self.load_inventory()
                 break
 
+    def load_inventory(self):
+        for i in range(0, len(self.scene.get_sprite_list("Slots"))):
+            self.scene.get_sprite_list("Slots")[i].held_item = self.playerInventory[i]
+            if self.playerInventory[i] is not None:
+                print(i, end=" ")
+                print(self.playerInventory[i])
+            self.check_once = 1
+
+
+
     def check_equipped(self):
-        print(self.playerObject.defence)
         self.playerObject.defence = self.playerObjectCopy.defence
         od = 90
         do = 101
@@ -196,6 +218,13 @@ class InventoryView(arcade.View):
             del self.playerObject.keys[arcade.key.I]
             self.gameView.camera.use()
             self.window.show_view(self.gameView)
+            self.load_inventory()
+        if arcade.key.A in self.playerObject.keys:
+            del self.playerObject.keys[arcade.key.A]
+            print("lol")
+            self.add_item()
+        if self.check_once == 0:
+            self.load_inventory()
         self.check_equipped()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
@@ -219,15 +248,16 @@ class InventoryView(arcade.View):
                     try:
                         if s.held_item is None:
                             if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
+                                self.playerInventory[self.scene.get_sprite_list("Slots").index(s)] = self.hold_item
                                 s.held_item = self.hold_item
-                                self.hold_item_slot.held_item = None
+                                self.playerInventory[self.scene.get_sprite_list("Slots").index(self.hold_item_slot)] = None
+                                self.hold_item_slot = None
                                 break
                         else:
                             if s.type_of_item is type(self.hold_item) or s.type_of_item is None:
                                 tmp = s.held_item
                                 s.held_item = self.hold_item
                                 self.hold_item_slot.held_item = tmp
-                                self.is_equipped(s)
                                 break
                     except:
                         self.hold_item_slot_last = self.hold_item
