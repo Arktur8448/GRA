@@ -114,24 +114,26 @@ class Alchemist(NPC):
 
 class EnemyShortDistance(NPC):
     def __init__(self, filename, name, description, pos_x, pos_y, level=1, exp_drop=0, health=1, strength=1, defence=1, agility=1,speed=1, race=None,
-                 weapon=None, drop=None,armor=None,s):
+                 weapon=None, drop=None,armor=None,special_skill=None):
         super().__init__(filename, name, description, pos_x, pos_y, level, exp_drop, health, strength, defence, agility,speed, race,weapon, drop)
         self.armor = armor if armor else []
+        self.special_skill = special_skill if special_skill else []
 
 
 class EnemyLongDistance(NPC):
     def __init__(self, filename, name, description, pos_x, pos_y, level=1, exp_drop=0, health=1, strength=1, defence=1, agility=1,speed=1, race=None,
-                 weapon=None, drop=None,armor=None,s):
+                 weapon=None, drop=None,armor=None,special_skill=None):
         super().__init__(filename, name, description, pos_x, pos_y, level, exp_drop, health, strength, defence, agility,speed, race,weapon, drop)
         self.armor = armor if armor else []
+        self.special_skill = special_skill if special_skill else []
 
 
-class HevyEnemy(NPC):
+class HeavyEnemy(NPC):
     def __init__(self, filename, name, description, pos_x, pos_y, level=1, exp_drop=0, health=1, strength=1, defence=1, agility=1,speed=1, race=None,
-                 weapon=None, drop=None,armor=None,s):
+                 weapon=None, drop=None,armor=None,special_skill=None):
         super().__init__(filename, name, description, pos_x, pos_y, level, exp_drop, health, strength, defence, agility,speed, race,weapon, drop)
         self.armor = armor if armor else []
-        self.speed = speed
+        self.special_skill = special_skill if special_skill else []
 
 
 class Mage(NPC):
@@ -172,4 +174,15 @@ class Friends(NPC):
             return True
         else:
             return False
+
+
+class Cleric(NPC):
+    def __init__(self, filename, name, description, pos_x, pos_y, level=1, exp_drop=0, health=1, strength=1, defence=1, agility=1,speed=1, race=None,
+                 weapon=None, drop=None,armor=None,special_skill=None,religion=""):
+        super().__init__(filename, name, description, pos_x, pos_y, level, exp_drop, health, strength, defence, agility,speed, race,weapon, drop)
+        self.armor = armor if armor else []
+        self.special_skill = special_skill if special_skill else []
+        self.religion = religion
+
+
 
