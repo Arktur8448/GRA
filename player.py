@@ -19,6 +19,9 @@ class Player(arcade.Sprite):
         self.dash_duration = 0
         self.dash_last_time = time.perf_counter() - self.dash_cooldown
 
+        self.last_time_slash = 0
+        self.slash_cooldown_time = 0
+
         self.keys = {}
 
         self.direction_move = "Down"

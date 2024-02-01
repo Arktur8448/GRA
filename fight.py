@@ -2,10 +2,6 @@ import arcade
 import time
 import math
 
-SLASH_COOLDOWN = 0.3
-SLASH_STAMINA = 5
-SLASH_DAMAGE = 10
-
 MOUSE_MARGIN = 40
 SCREEN_WIDTH = 992
 SCREEN_HEIGHT = 572
@@ -19,9 +15,9 @@ class Slash(arcade.Sprite):
         self.direction = None
 
 
-def get_slash(player_object, scene, x, y):
-    if len(scene.get_sprite_list("Slash")) == 0 and player_object.stamina > 5:
-        player_object.stamina -= 5
+def get_slash(player_object, scene, x, y, slash_damage, slash_stamina, slash_cooldown, slash_duration):
+    if len(scene.get_sprite_list("Slash")) == 0 and player_object.stamina > slash_stamina and player_object.slash_cooldown_time <= 0:
+        player_object.stamina -= slash_stamina
         slash = Slash(center_x=player_object.center_x, center_y=player_object.center_y)
         x -= SCREEN_WIDTH / 2
         y -= SCREEN_HEIGHT / 2
@@ -67,18 +63,19 @@ def get_slash(player_object, scene, x, y):
         scene.add_sprite("Slash", slash)
         for e in scene.get_sprite_list("NPC"):
             if arcade.check_for_collision(e, slash):
-                e.health -= SLASH_DAMAGE
+                e.health -= slash_damage
                 if e.health <= 0:
                     e.kill()
 
-
-time_slash = time.perf_counter() - SLASH_COOLDOWN
+        player_object.last_time_slash = time.perf_counter() + slash_duration
+        player_object.slash_cooldown_time = slash_cooldown
 
 
 def update(player_object, physics_engine, scene):
-    global time_slash
+    if player_object.slash_cooldown_time > 0:
+        player_object.slash_cooldown_time -= 1/60
     if len(scene.get_sprite_list("Slash")) > 0:
-        if time.perf_counter() - time_slash >= SLASH_COOLDOWN:
+        if time.perf_counter() > player_object.last_time_slash:
             for s in scene.get_sprite_list("Slash"):
                 s.kill()
                 player_object.can_move = True
@@ -126,5 +123,3 @@ def update(player_object, physics_engine, scene):
                         slash.center_y += -50
                         attack_force = (attack_force_power, -attack_force_power)
                 physics_engine.apply_force(player_object, attack_force)
-    else:
-        time_slash = time.perf_counter()

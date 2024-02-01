@@ -140,7 +140,8 @@ class GameView(arcade.View):
             del self.playerObject.keys[arcade.key.I]
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        fight.get_slash(self.playerObject, self.scene, x, y)
+        if button == 1:
+            fight.get_slash(self.playerObject, self.scene, x, y, self.playerObject.strength, 10, 1, 0.5)
 
 
 def main():
