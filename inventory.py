@@ -57,6 +57,7 @@ class InventoryView(arcade.View):
         self.scene = arcade.Scene()
         self.scene.add_sprite_list("Slots")
         self.scene.add_sprite_list("Player")
+        self.scene.add_sprite_list("Exit")
         for r in range(1, self.row_count + 1):
             for c in range(1, self.coulum_count + 1):
                 self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
@@ -142,6 +143,10 @@ class InventoryView(arcade.View):
                                                 scale=1.5))
             x += 52
         del x
+        self.scene.add_sprite("Exit", Slot("sprites/inventory/slot.png",
+                                            center_x=24,
+                                            center_y=SCREEN_HEIGHT-24,
+                                            scale=1))
 
         self.load_inventory()
 
@@ -216,6 +221,11 @@ class InventoryView(arcade.View):
                     self.hold_item_slot = s
                     self.hold_item_slot.can_show_item = False
                     self.hold_item_slot_last = s.held_item
+            for s in self.scene.get_sprite_list("Exit"):
+                if s.collides_with_point((x, y)):
+                    self.gameView.camera.use()
+                    self.window.show_view(self.gameView)
+                    self.load_inventory()
 
     def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
                       _buttons: int, _modifiers: int):
@@ -275,7 +285,11 @@ class BlackSmithView(arcade.View):
         self.playerObjectCopy = copy.deepcopy(self.playerObject)
         self.page = 2
         self.playerInventory = [None] * 150
+        self.playerInventory[0] = items.Ring("sprites/inventory/chest.png", "good", "hat", "Common", 10, 0, 0, 0,10)
         self.check_once = 0
+        self.blacksmithEnchant = [None] * 3
+        self.blacksmithDeEnchant = [None] * 2
+        self.blacksmithInventory = [None] * 150
 
     def on_show_view(self):
         arcade.set_background_color((42, 42, 42))
@@ -285,6 +299,8 @@ class BlackSmithView(arcade.View):
         self.scene.add_sprite_list("Blacksmith1")
         self.scene.add_sprite_list("Blacksmith2")
         self.scene.add_sprite_list("Blacksmith3")
+        self.scene.add_sprite_list("Pager")
+        self.scene.add_sprite_list("Exit")
         for r in range(1, self.row_count + 1):
             for c in range(1, self.coulum_count + 1):
                 self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
@@ -317,9 +333,18 @@ class BlackSmithView(arcade.View):
         for r in range(1, 9):
             for c in range(1, 10):
                 self.scene.add_sprite("Blacksmith3", Slot("sprites/inventory/slot.png",
-                                                          50 * c,
-                                                          50 * r + 47,
-                                                          1.5))
+                                                    50 * c,
+                                                    SCREEN_HEIGHT - 25 - 50 * r,
+                                                    1.5))
+        for s in range(1, 4):
+            self.scene.add_sprite("Pager", Slot("sprites/inventory/hat.png",
+                                                175+50*s,
+                                                50,
+                                                1))
+        self.scene.add_sprite("Exit", Slot("sprites/inventory/slot.png",
+                                           center_x=24,
+                                           center_y=SCREEN_HEIGHT - 24,
+                                           scale=1))
 
         self.load_inventory()
 
@@ -343,16 +368,44 @@ class BlackSmithView(arcade.View):
     def load_inventory(self):
         for i in range(0, len(self.scene.get_sprite_list("Slots"))):
             self.scene.get_sprite_list("Slots")[i].held_item = self.playerInventory[i]
-            if self.playerInventory[i] is not None:
-                print(i, end=" ")
-                print(self.playerInventory[i])
-            self.check_once = 1
+        for i in range(0, len(self.scene.get_sprite_list("Blacksmith1"))):
+            self.scene.get_sprite_list("Blacksmith1")[i].held_item = self.blacksmithEnchant[i]
+        for i in range(0, len(self.scene.get_sprite_list("Blacksmith2"))):
+            self.scene.get_sprite_list("Blacksmith2")[i].held_item = self.blacksmithDeEnchant[i]
+        for i in range(0, len(self.scene.get_sprite_list("Blacksmith3"))):
+            self.scene.get_sprite_list("Blacksmith3")[i].held_item = self.blacksmithInventory[i]
+        self.check_once = 1
 
     def on_draw(self):
         self.clear()
         self.camera.use()
-        self.scene.draw(pixelated=True)
+        tab = ["Slots", "Pager", "Exit"]
+        if self.page == 1:
+            tab.append("Blacksmith1")
+            for s in self.scene.get_sprite_list("Blacksmith2"):
+                s.held_item = None
+            for s in self.scene.get_sprite_list("Blacksmith3"):
+                s.held_item = None
+        if self.page == 2:
+            tab.append("Blacksmith2")
+            for s in self.scene.get_sprite_list("Blacksmith1"):
+                s.held_item = None
+            for s in self.scene.get_sprite_list("Blacksmith3"):
+                s.held_item = None
+        if self.page == 3:
+            tab.append("Blacksmith3")
+            for s in self.scene.get_sprite_list("Blacksmith1"):
+                s.held_item = None
+            for s in self.scene.get_sprite_list("Blacksmith2"):
+                s.held_item = None
+        self.scene.draw(names=tab, pixelated=True)
         for s in self.scene.get_sprite_list("Slots"):
+            s.show_item()
+        for s in self.scene.get_sprite_list("Blacksmith1"):
+            s.show_item()
+        for s in self.scene.get_sprite_list("Blacksmith2"):
+            s.show_item()
+        for s in self.scene.get_sprite_list("Blacksmith3"):
             s.show_item()
 
     def on_update(self, delta_time):
@@ -361,10 +414,6 @@ class BlackSmithView(arcade.View):
             self.gameView.camera.use()
             self.window.show_view(self.gameView)
             self.load_inventory()
-        if arcade.key.A in self.playerObject.keys:
-            del self.playerObject.keys[arcade.key.A]
-            print("lol")
-            self.add_item(items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0,10))
         if self.check_once == 0:
             self.load_inventory()
 
@@ -376,6 +425,22 @@ class BlackSmithView(arcade.View):
                     self.hold_item_slot = s
                     self.hold_item_slot.can_show_item = False
                     self.hold_item_slot_last = s.held_item
+            for s in self.scene.get_sprite_list("Pager"):
+                if s.collides_with_point((x, y)):
+                    if s is self.scene.get_sprite_list("Pager")[0]:
+                        self.page = 1
+                        self.load_inventory()
+                    elif s is self.scene.get_sprite_list("Pager")[1]:
+                        self.page = 2
+                        self.load_inventory()
+                    elif s is self.scene.get_sprite_list("Pager")[2]:
+                        self.page = 3
+                        self.load_inventory()
+            for s in self.scene.get_sprite_list("Exit"):
+                if s.collides_with_point((x, y)):
+                    self.gameView.camera.use()
+                    self.window.show_view(self.gameView)
+                    self.load_inventory()
 
     def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
                       _buttons: int, _modifiers: int):
@@ -436,9 +501,11 @@ class ShopView(arcade.View):
         self.playerObjectCopy = copy.deepcopy(self.playerObject)
         self.page = 1
         self.playerInventory = [None] * 150
-        self.playerInventory[0] = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 10, 0, 0, 0,10)
-        self.shop_inventory = [None] * 150
-        self.shop_inventory[0] = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 10, 0, 0, 0,10)
+        self.playerInventory[0] = items.Ring("sprites/inventory/chest.png", "good", "hat", "Common", 10, 0, 0, 0,10)
+        self.shop_inventory1 = [None] * 150
+        self.shop_inventory1[0] = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 10, 110, 0, 0,10)
+        self.shop_inventory2 = [None] * 150
+        self.shop_inventory2[1] = items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 10, 110, 0, 0, 10)
         self.check_once = 0
 
     def on_show_view(self):
@@ -448,6 +515,8 @@ class ShopView(arcade.View):
         self.scene.add_sprite_list("Slots")
         self.scene.add_sprite_list("Shop1")
         self.scene.add_sprite_list("Shop2")
+        self.scene.add_sprite_list("Pager")
+        self.scene.add_sprite_list("Exit")
         for r in range(1, self.row_count + 1):
             for c in range(1, self.coulum_count + 1):
                 self.scene.add_sprite("Slots", Slot("sprites/inventory/slot.png",
@@ -459,15 +528,24 @@ class ShopView(arcade.View):
             for c in range(1, 10):
                 self.scene.add_sprite("Shop1", Slot("sprites/inventory/slot.png",
                                                     50 * c,
-                                                    50 * r + 47,
+                                                    SCREEN_HEIGHT - 25 - 50 * r,
                                                     1.5))
-        # page 1
+        # page 2
         for r in range(1, 9):
             for c in range(1, 10):
                 self.scene.add_sprite("Shop2", Slot("sprites/inventory/slot.png",
                                                     50 * c,
-                                                    50 * r + 47,
+                                                    SCREEN_HEIGHT - 25 - 50 * r,
                                                     1.5))
+        for s in range(1, 3):
+            self.scene.add_sprite("Pager", Slot("sprites/inventory/hat.png",
+                                                175+50*s,
+                                                50,
+                                                1))
+        self.scene.add_sprite("Exit", Slot("sprites/inventory/slot.png",
+                                           center_x=24,
+                                           center_y=SCREEN_HEIGHT - 24,
+                                           scale=1))
 
         self.load_inventory()
 
@@ -480,14 +558,6 @@ class ShopView(arcade.View):
     def delete_item(self, slot_index):
         self.scene.get_sprite_list("Slots")[slot_index].held_item = None
 
-    def add_item(self, item):
-        # self.playerInventory.append(items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10))
-        for i in range(0, len(self.playerInventory)):
-            if self.playerInventory[i] is None:
-                self.playerInventory[i] = item
-                self.load_inventory()
-                break
-
     def load_inventory(self):
         for i in range(0, len(self.scene.get_sprite_list("Slots"))):
             self.scene.get_sprite_list("Slots")[i].held_item = self.playerInventory[i]
@@ -495,17 +565,35 @@ class ShopView(arcade.View):
                 print(i, end=" ")
                 print(self.playerInventory[i])
         for i in range(0, len(self.scene.get_sprite_list("Shop1"))):
-            self.scene.get_sprite_list("Shop1")[i].held_item = self.shop_inventory[i]
-            if self.shop_inventory[i] is not None:
+            self.scene.get_sprite_list("Shop1")[i].held_item = self.shop_inventory1[i]
+            if self.shop_inventory1[i] is not None:
                 print(i, end=" ")
-                print(self.shop_inventory[i])
-            self.check_once = 1
+                print(self.shop_inventory1[i])
+        for i in range(0, len(self.scene.get_sprite_list("Shop2"))):
+            self.scene.get_sprite_list("Shop2")[i].held_item = self.shop_inventory2[i]
+            if self.shop_inventory2[i] is not None:
+                print(i, end=" ")
+                print(self.shop_inventory2[i])
+        self.check_once = 1
 
     def on_draw(self):
         self.clear()
         self.camera.use()
-        self.scene.draw(pixelated=True)
+        tab = ["Slots", "Pager", "Exit"]
+        if self.page == 1:
+            tab.append("Shop1")
+            for s in self.scene.get_sprite_list("Shop2"):
+                s.held_item = None
+        if self.page == 2:
+            tab.append("Shop2")
+            for s in self.scene.get_sprite_list("Shop1"):
+                s.held_item = None
+        self.scene.draw(names=tab, pixelated=True)
         for s in self.scene.get_sprite_list("Slots"):
+            s.show_item()
+        for s in self.scene.get_sprite_list("Shop1"):
+            s.show_item()
+        for s in self.scene.get_sprite_list("Shop2"):
             s.show_item()
 
     def on_update(self, delta_time):
@@ -516,8 +604,13 @@ class ShopView(arcade.View):
             self.load_inventory()
         if arcade.key.A in self.playerObject.keys:
             del self.playerObject.keys[arcade.key.A]
-            print("lol")
-            self.add_item(items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10))
+            if self.page == 1:
+                self.page = 2
+            else:
+                self.page = 1
+            self.load_inventory()
+            # print("lol")
+            # self.add_item(items.Ring("sprites/inventory/ring.png", "good", "hat", "Common", 0, 0, 0, 0, 10))
         if self.check_once == 0:
             self.load_inventory()
 
@@ -533,13 +626,45 @@ class ShopView(arcade.View):
                 if s.collides_with_point((x, y)):
                     try:
                         if self.playerObject.gold >= s.held_item.price_buy:
-                            self.playerObject.gold -= s.held_item.price_buy
-                            self.hold_item = s.held_item
-                            self.hold_item_slot = s
-                            self.hold_item_slot.can_show_item = False
-                            self.hold_item_slot_last = s.held_item
+                            for i in range(0, len(self.playerInventory)):
+                                if self.playerInventory[i] is None:
+                                    self.playerObject.gold -= s.held_item.price_buy
+                                    self.playerInventory[i] = s.held_item
+                                    self.load_inventory()
+                                    break
                     except:
                         pass
+            for s in self.scene.get_sprite_list("Shop2"):
+                if s.collides_with_point((x, y)):
+                    try:
+                        if self.playerObject.gold >= s.held_item.price_buy:
+                            # self.playerObject.gold -= s.held_item.price_buy
+                            # self.hold_item = s.held_item
+                            # self.hold_item_slot = s
+                            # self.hold_item_slot.can_show_item = False
+                            # self.hold_item_slot_last = s.held_item
+                            # ^ jest upo i jak się upusci przed eq to item się dezintegruje więc zrobiłem że po kliknięciu jest buy
+                            for i in range(0, len(self.playerInventory)):
+                                if self.playerInventory[i] is None:
+                                    self.playerObject.gold -= s.held_item.price_buy
+                                    self.playerInventory[i] = s.held_item
+                                    self.load_inventory()
+                                    break
+                    except:
+                        pass
+            for s in self.scene.get_sprite_list("Pager"):
+                if s.collides_with_point((x, y)):
+                    if s is self.scene.get_sprite_list("Pager")[0]:
+                        self.page = 1
+                        self.load_inventory()
+                    elif s is self.scene.get_sprite_list("Pager")[1]:
+                        self.page = 2
+                        self.load_inventory()
+            for s in self.scene.get_sprite_list("Exit"):
+                if s.collides_with_point((x, y)):
+                    self.gameView.camera.use()
+                    self.window.show_view(self.gameView)
+                    self.load_inventory()
             print(self.playerObject.gold)
 
     def on_mouse_drag(self, x: float, y: float, dx: float, dy: float,
@@ -569,6 +694,13 @@ class ShopView(arcade.View):
                                 break
                     except:
                         self.hold_item_slot_last = self.hold_item
+            # for s in self.scene.get_sprite_list("Shop1"):
+            #     if s.collides_with_point((x, y)) and s is not self.hold_item_slot and self.hold_item:
+            #         self.playerObject.gold += self.hold_item.price_sell
+            #         self.hold_item_slot = None
+            #         print("sprzedane")
+            #         self.hold_item = None
+            #         self.hold_item_slot_last = None
 
             if self.hold_item:
                 try:
